@@ -50,35 +50,80 @@ class Grid:
                     max_width = cell_width
         return max_width
 
+    def get_borders(self):
+        top_left, top_mid, top_right = "┌", "┬", "┐"
+        mid_left, mid_mid, mid_right = "├", "┼", "┤"
+        bot_left, bot_mid, bot_right = "└", "┴", "┘"
+        horiz = "─" * (self.get_max_width() + 2)
+
+        # Initialisation de la bordure supérieure
+        top_border = Fore.BLUE + top_left
+        for _ in range(self.size):
+            top_border += horiz
+            if _ < self.size - 1:
+                top_border += top_mid
+        top_border += top_right + Fore.RESET
+
+        # Initialisation de la bordure intermédiaire avec la condition pour les colonnes
+        mid_border = Fore.BLUE + mid_left + Fore.RESET
+        for col_index in range(self.size):
+            mid_border += Fore.GREEN + horiz
+            if col_index < self.size - 1:  # Ajouter un séparateur entre les colonnes sauf à la fin
+                if (col_index + 1) % int(sqrt(self.size)) == 0:  # Vérifier si c'est une frontière de carré
+                    mid_border += Fore.BLUE + mid_mid  # Bleu pour les séparateurs entre les carrés
+                else:
+                    mid_border += Fore.GREEN + mid_mid  # Vert pour les autres séparateurs
+        mid_border += Fore.BLUE + mid_right + Fore.RESET
+
+        # Initialisation de la bordure intermédiaire spéciale
+        mid_border_sep = Fore.BLUE + mid_left
+        for _ in range(self.size):
+            mid_border_sep += horiz
+            if _ < self.size - 1:
+                mid_border_sep += mid_mid
+        mid_border_sep += mid_right + Fore.RESET
+
+        # Initialisation de la bordure inférieure
+        bottom_border = Fore.BLUE + bot_left
+        for _ in range(self.size):
+            bottom_border += horiz
+            if _ < self.size - 1:
+                bottom_border += bot_mid
+        bottom_border += bot_right + Fore.RESET
+
+        return top_border, mid_border, mid_border_sep, bottom_border
+
 
     def __str__(self):
         square_size = int(sqrt(self.size))
         max_width = self.get_max_width()
         cell_width = max_width + 2  # Ajouter un espace de chaque côté pour l'esthétique
 
-        # Définir les séparateurs spéciaux
-        top_left, top_mid, top_right = "┌", "┬", "┐"
-        mid_left, mid_mid, mid_right = "├", "┼", "┤"
-        bot_left, bot_mid, bot_right = "└", "┴", "┘"
-        horiz = "─" * cell_width
-
-        # Construire les bordures
-        top_border = Fore.BLUE + top_left + (top_mid.join([horiz] * self.size)) + top_right + Fore.RESET
-        mid_border = Fore.BLUE + mid_left + Fore.GREEN + (mid_mid.join([horiz] * self.size)) + Fore.BLUE + mid_right + Fore.RESET
-        mid_border_sep = Fore.BLUE + mid_left + (mid_mid.join([horiz] * self.size)) + mid_right + Fore.RESET
-        bottom_border = Fore.BLUE + bot_left + (bot_mid.join([horiz] * self.size)) + bot_right + Fore.RESET
+        top_border, mid_border, mid_border_sep, bottom_border = self.get_borders()
 
         lines = [top_border]
         for row_index, row in enumerate(self.grid):
             line = []
             for cell_idx, cell in enumerate(row):
                 if cell != 0:
-                    formatted_cell = Fore.RESET + str(cell).rjust(max_width)
+                    formatted_cell = Fore.RESET + str(cell).center(max_width)
                 else:
                     formatted_cell = ' ' * max_width
 
                 line.append(f" {formatted_cell} ")
-            lines.append(Fore.BLUE + "│" + Fore.GREEN + "│".join(line) + Fore.BLUE + "│" + Fore.RESET)
+
+            formatted_line = Fore.BLUE + "│" 
+            for col_idx, cell in enumerate(line):
+                formatted_line += cell
+                # Vérifier si c'est une frontière de sous-carré ou le dernier séparateur de la ligne
+                if (col_idx + 1) % square_size == 0 or col_idx + 1 == self.size:
+                    formatted_line += Fore.BLUE + "│"  # Séparateur bleu
+                else:
+                    formatted_line += Fore.GREEN + "│"  # Séparateur vert
+            formatted_line += Fore.RESET
+            lines.append(formatted_line)
+
+
             if row_index != self.size - 1:
                 if (row_index + 1) % square_size == 0 and row_index + 1 != self.size:
                     lines.append(mid_border_sep) 
