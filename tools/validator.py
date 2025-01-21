@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from Grid import Grid
+from models.Grid import Grid
 from math import sqrt
 
 def verify(grid: Grid) -> bool:

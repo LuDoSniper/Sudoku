@@ -1,9 +1,9 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from Grid import Grid
-from generator import generate_full, calibrate
-from validator import verify
+from models.Grid import Grid
+from tools.generator import generate_full, calibrate
+from tools.validator import verify
 
 print("Début des tests")
 
