@@ -15,23 +15,31 @@ class Grid:
         if not grid:
             grid = [[0 for _ in range(size)] for _ in range(size)]
         elif len(grid) != size or any(len(row) != size for row in grid):
-            raise ValueError("Grid must be a 2D list of size x size")
+            raise ValueError("Grid must be a 2D list of size x size. This error can be caused by a wrong size parameter or a wrong grid parameter.")
 
         self.grid = grid
     
     def get_row(self, index: int) -> list:
-        return self.grid[index]
+        return list(self.grid[index])
     
     def get_col(self, index: int) -> list:
         return [row[index] for row in self.grid]
 
     def get_square(self, row: int, col: int) -> list:
+        square_size = int(sqrt(self.size))
+
+        # Trouver le coin supérieur gauche du sous-carré
+        start_row = (row // square_size) * square_size
+        start_col = (col // square_size) * square_size
+
+        # Collecter toutes les cellules du sous-carré
         square = []
-        for y in range(int(sqrt(self.size))):
-            for x in range(int(sqrt(self.size))):
-                square.append(self.grid[row + y][col + x])
+        for i in range(start_row, start_row + square_size):
+            for j in range(start_col, start_col + square_size):
+                square.append(self.grid[i][j])
+
         return square
-    
+
     def __str__(self):
         square_size = int(sqrt(self.size))
         lines = []
@@ -41,7 +49,7 @@ class Grid:
             for col_idx, cell in enumerate(row):
                 if col_idx % square_size == 0:
                     line.append(self.STR_SEP_SQUARE_COL)
-                line.append(str(cell))
+                line.append(str(cell) if cell != 0 else " ")
                 line.append(self.STR_SEP_COL)
             lines.append("".join(line))
             
