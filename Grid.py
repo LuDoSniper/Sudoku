@@ -13,7 +13,7 @@ class Grid:
         self.size = size
 
         if not grid:
-            grid = [[0 for _ in range(9)] for _ in range(9)]
+            grid = [[0 for _ in range(size)] for _ in range(size)]
         elif len(grid) != size or any(len(row) != size for row in grid):
             raise ValueError("Grid must be a 2D list of size x size")
 
