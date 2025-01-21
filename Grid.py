@@ -49,7 +49,7 @@ class Grid:
             for col_idx, cell in enumerate(row):
                 if col_idx % square_size == 0:
                     line.append(self.STR_SEP_SQUARE_COL)
-                line.append(str(cell))
+                line.append(str(cell) if cell != 0 else " ")
                 line.append(self.STR_SEP_COL)
             lines.append("".join(line))
             
