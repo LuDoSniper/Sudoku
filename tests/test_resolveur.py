@@ -8,7 +8,6 @@ from models.Grid import Grid
 class TestBacktrackingIteratifPile(unittest.TestCase):
 
     def setUp(self):
-        """Initialisation des grilles de test."""
         self.test_grid_4x4 = [
             [3, 4, 2, 0],
             [1, 2, 0, 3],
@@ -28,11 +27,9 @@ class TestBacktrackingIteratifPile(unittest.TestCase):
         self.sudoku_grid_impossible = Grid(4, grid=self.test_grid_4x4_impossible)
 
     def test_backtracking_iteratif_pile_valid_grid(self):
-        """Test si la méthode résout correctement une grille valide."""
         self.assertTrue(backtracking_iteratif_pile(self.sudoku_grid))
 
     def test_backtracking_iteratif_pile_invalid_grid(self):
-        """Test si la méthode détecte correctement une grille impossible à résoudre."""
         self.assertFalse(backtracking_iteratif_pile(self.sudoku_grid_impossible))
 
 

@@ -12,7 +12,6 @@ from tools.validator import verify
 class TestGridGeneration(unittest.TestCase):
 
     def test_4x4_grid(self):
-        """Test de génération et vérification d'une grille 4x4."""
         grid = Grid(4)
         generate_full(grid)
         self.assertTrue(verify(grid), "La vérification de la grille 4x4 a échoué")
@@ -20,7 +19,6 @@ class TestGridGeneration(unittest.TestCase):
         print(grid)
 
     def test_9x9_grid(self):
-        """Test de génération et vérification d'une grille 9x9."""
         grid = Grid(9)
         generate_full(grid)
         self.assertTrue(verify(grid), "La vérification de la grille 9x9 a échoué")
@@ -28,7 +26,6 @@ class TestGridGeneration(unittest.TestCase):
         print(grid)
 
     def test_16x16_grid(self):
-        """Test de génération et vérification d'une grille 16x16."""
         grid = Grid(16)
         generate_full(grid)
         self.assertTrue(verify(grid), "La vérification de la grille 16x16 a échoué")
