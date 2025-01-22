@@ -1,23 +1,40 @@
+import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from resolveurs.backtracking_iteratif_pile import backtracking_iteratif_pile
 from models.Grid import Grid
 
-test_grid_4x4 = [
-    [3, 4, 2, 0],
-    [1, 2, 0, 3],
-    [4, 0, 0, 2],
-    [0, 0, 3, 4]
-]
+class TestBacktrackingIteratifPile(unittest.TestCase):
 
-sudoku_grid = Grid(4, grid=test_grid_4x4)
+    def setUp(self):
+        """Initialisation des grilles de test."""
+        self.test_grid_4x4 = [
+            [3, 4, 2, 0],
+            [1, 2, 0, 3],
+            [4, 0, 0, 2],
+            [0, 0, 3, 4]
+        ]
 
-print("Grille initiale :")
-print(sudoku_grid)
+        self.test_grid_4x4_impossible = [
+            [3, 4, 2, 0],
+            [1, 0, 2, 3],
+            [4, 0, 0, 2],
+            [0, 0, 3, 4]
+        ]
 
-if backtracking_iteratif_pile(sudoku_grid):
-    print("Grille résolue :")
-    print(sudoku_grid)
-else:
-    print("Impossible de résoudre la grille.")
+        # Initialisation des grilles avec le modèle Grid
+        self.sudoku_grid = Grid(4, grid=self.test_grid_4x4)
+        self.sudoku_grid_impossible = Grid(4, grid=self.test_grid_4x4_impossible)
+
+    def test_backtracking_iteratif_pile_valid_grid(self):
+        """Test si la méthode résout correctement une grille valide."""
+        self.assertTrue(backtracking_iteratif_pile(self.sudoku_grid))
+
+    def test_backtracking_iteratif_pile_invalid_grid(self):
+        """Test si la méthode détecte correctement une grille impossible à résoudre."""
+        self.assertFalse(backtracking_iteratif_pile(self.sudoku_grid_impossible))
+
+
+if __name__ == '__main__':
+    unittest.main()
