@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from resolveurs.backtracking_iteratif_pile import backtracking_iteratif_pile
+from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from models.Grid import Grid
 
 class TestBacktrackingIteratifPile(unittest.TestCase):
