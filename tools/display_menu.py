@@ -1,6 +1,9 @@
 import shutil
 import textwrap
-from colorama import Fore
+from colorama import Fore, Back
+from models.Grid import Grid
+from models.Char import Char
+from math import sqrt
 
 def get_terminal_width() -> int:
     return shutil.get_terminal_size().columns
@@ -101,7 +104,117 @@ def difficulty_selection_menu(n: int|None = None) -> None:
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'q. Retour'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
-def display(menu: str, n: int|None = None) -> None:
+def decolor_string(string: str) -> str:
+    """
+    Retire les couleurs d'une chaîne de caractères
+    """
+    colors = (
+        Fore.RESET,
+        Fore.BLACK,
+        Fore.WHITE,
+        Fore.RED,
+        Fore.GREEN,
+        Fore.CYAN,
+        Fore.BLUE,
+        Fore.MAGENTA,
+        Fore.YELLOW,
+        Fore.LIGHTBLACK_EX,
+        Fore.LIGHTWHITE_EX,
+        Fore.LIGHTRED_EX,
+        Fore.LIGHTGREEN_EX,
+        Fore.LIGHTCYAN_EX,
+        Fore.LIGHTBLUE_EX,
+        Fore.LIGHTMAGENTA_EX,
+        Fore.LIGHTYELLOW_EX,
+    )
+    formated_string = string
+    for color in colors:
+        formated_string = formated_string.replace(color, "")
+    return formated_string
+
+def get_first_color(string: str) -> str|None:
+    """
+    Renvois la première couleur trouvée dans une chaîne de caractères
+    """
+    colors = (
+        Fore.RESET,
+        Fore.BLACK,
+        Fore.WHITE,
+        Fore.RED,
+        Fore.GREEN,
+        Fore.CYAN,
+        Fore.BLUE,
+        Fore.MAGENTA,
+        Fore.YELLOW,
+        Fore.LIGHTBLACK_EX,
+        Fore.LIGHTWHITE_EX,
+        Fore.LIGHTRED_EX,
+        Fore.LIGHTGREEN_EX,
+        Fore.LIGHTCYAN_EX,
+        Fore.LIGHTBLUE_EX,
+        Fore.LIGHTMAGENTA_EX,
+        Fore.LIGHTYELLOW_EX,
+    )
+    indexes = []
+    for color in colors:
+        if color in string:
+            indexes.append((string.index(color), color))
+    
+    if indexes:
+        return min(indexes)[1]
+    return None
+
+
+def decolor_string_v2(string: str) -> list[Char]:
+    """
+    Retire les couleurs d'une chaîne de caractères
+    et renvois une liste de chaque charactère avec sa couleur
+    et sa couleur de background associées
+    """
+    chars = []
+    last_color = Fore.RESET
+    color = get_first_color(string)
+    while color and color in string:
+        index = string.index(color)
+        for char in string[:index]:
+            chars.append(Char(char, last_color))
+        string = string[index + len(color):]
+        last_color = color
+        color = get_first_color(string)
+    if string:
+        for char in string:
+            chars.append(Char(char, last_color))
+    return chars
+
+def recolor_string(chars: list[Char]) -> str:
+    """
+    Recolorie une liste de caractères
+    """
+    string = ""
+    for char in chars:
+        string += char.__str__()
+    return string
+
+def grid_menu(grid: Grid, cursor_pos: tuple[int]) -> None:
+    lines = grid.__str__().split("\n")
+    index_y, index_x = cursor_pos[0] * 2 + 1, cursor_pos[1] * 4 + 1 + 1
+
+    selected_line = lines[index_y]
+    
+    decolored_line = decolor_string_v2(selected_line)
+    left, center, right = decolored_line[:index_x], decolored_line[index_x], decolored_line[index_x + 1:]
+    
+    # center = f"{Back.CYAN}{center}{Back.RESET}"
+    center.back = Back.CYAN
+    right[0].back = Back.RESET
+    selected_line = left + [center] + right
+    
+    lines[index_y] = recolor_string(selected_line)
+
+    for line in lines:
+        print(line)
+
+def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None) -> None:
     match menu:
         case "main":
             main_menu()
@@ -115,5 +228,7 @@ def display(menu: str, n: int|None = None) -> None:
             n_selection(n)
         case "difficulty_selection":
             difficulty_selection_menu(n)
+        case "grid":
+            grid_menu(grid, cursor_position)
         case _:
             message("Menu invalide", "error")

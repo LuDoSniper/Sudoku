@@ -5,12 +5,16 @@ if os.name == "posix":
 import keyboard
 from tools.display_menu import display, message
 from math import sqrt
+from models.Grid import Grid
+from tools.generator import generate
 
 # Variables globales
 running = True
 current_menu = "main"
 selected_size = None
 selected_difficulty = None
+grid = None
+cursor_position = None
 
 def clear() -> None:
     """
@@ -34,9 +38,9 @@ def set_terminal_mode(raw: bool = True) -> None:
     else:
         termios.tcsetattr(fd, termios.TCSADRAIN, settings)
 
-def display_menu(menu: str, n: int|None = None) -> None:
+def display_menu(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None) -> None:
     clear()
-    display(menu, n)
+    display(menu, n=n, grid=grid, cursor_position=cursor_position)
 
 def on_press(event: keyboard.KeyboardEvent) -> None:
     """
@@ -45,6 +49,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     global current_menu
     global selected_size
     global selected_difficulty
+    global grid
+    global cursor_position
 
     # Cas spéciale séparé pour une meilleure lisibilité (custom input)
     if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'backspace', 'enter'):
@@ -53,6 +59,14 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 if current_menu in ("n_selection", "n_import_selection") and selected_size:
                     selected_size = int(str(selected_size)[:-1]) if len(str(selected_size)) > 1 else None
                     display_menu(current_menu, selected_size)
+                elif current_menu == "grid":
+                    if cursor_position:
+                        if grid.grid[cursor_position[0]][cursor_position[1]] != 0:
+                            grid.grid[cursor_position[0]][cursor_position[1]] = 0
+                            grid.player_cells.remove(cursor_position)
+                            display_menu("grid", grid=grid, cursor_position=cursor_position)
+                    else:
+                        message("Veuillez sélectionner une case", "error")
             case "enter":
                 if current_menu in ("n_selection", "n_import_selection") and selected_size:
                     if selected_size > 0 and sqrt(selected_size) % 1 == 0:
@@ -67,9 +81,18 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         display_menu(current_menu, selected_size)
                         message("Veuillez entrer un entier valide", "error")
             case _:
-                if current_menu in ("n_selection", "n_import_selection"):
-                    selected_size = int(str(selected_size) + event.name) if selected_size else int(event.name)
-                    display_menu(current_menu, selected_size)
+                match current_menu:
+                    case "n_selection" | "n_import_selection":
+                        selected_size = int(str(selected_size) + event.name) if selected_size else int(event.name)
+                        display_menu(current_menu, selected_size)
+                    case "grid":
+                        if cursor_position:
+                            if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
+                                grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
+                                grid.player_cells.append(cursor_position)
+                                display_menu("grid", grid=grid, cursor_position=cursor_position)
+                        else:
+                            message("Veuillez sélectionner une case", "error")
 
     match event.name:
         case "1":
@@ -84,6 +107,13 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "difficulty_selection"
                     selected_size = 4
                     display_menu(current_menu, selected_size)
+                case "difficulty_selection":
+                    selected_difficulty = "easy"
+                    current_menu = "grid"
+                    cursor_position = (0, 0)
+                    grid = Grid(selected_size)
+                    generate(grid, selected_difficulty)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "2":
             match current_menu:
                 case "main":
@@ -96,6 +126,13 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "difficulty_selection"
                     selected_size = 9
                     display_menu(current_menu, selected_size)
+                case "difficulty_selection":
+                    selected_difficulty = "normal"
+                    current_menu = "grid"
+                    cursor_position = (0, 0)
+                    grid = Grid(selected_size)
+                    generate(grid, selected_difficulty)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "3":
             match current_menu:
                 case "main":
@@ -104,6 +141,13 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "difficulty_selection"
                     selected_size = 16
                     display_menu(current_menu, selected_size)
+                case "difficulty_selection":
+                    selected_difficulty = "hard"
+                    current_menu = "grid"
+                    cursor_position = (0, 0)
+                    grid = Grid(selected_size)
+                    generate(grid, selected_difficulty)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "4":
             match current_menu:
                 case "classique":
@@ -121,8 +165,46 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "classique"
                     selected_size = None
                     display_menu(current_menu)
+        
+        case "up":
+            if current_menu == "grid":
+                if cursor_position:
+                    if cursor_position[0] > 0:
+                        cursor_position = (cursor_position[0] - 1, cursor_position[1])
+                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                else:
+                    cursor_position = (0, 0)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+        case "down":
+            if current_menu == "grid":
+                if cursor_position:
+                    if cursor_position[0] < grid.size - 1:
+                        cursor_position = (cursor_position[0] + 1, cursor_position[1])
+                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                else:
+                    cursor_position = (0, 0)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+        case "left":
+            if current_menu == "grid":
+                if cursor_position:
+                    if cursor_position[1] > 0:
+                        cursor_position = (cursor_position[0], cursor_position[1] - 1)
+                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                else:
+                    cursor_position = (0, 0)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+        case "right":
+            if current_menu == "grid":
+                if cursor_position:
+                    if cursor_position[1] < grid.size - 1:
+                        cursor_position = (cursor_position[0], cursor_position[1] + 1)
+                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                else:
+                    cursor_position = (0, 0)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+
         case _:
-            pass
+            message("Ceci est un message de debug", "info")
 
 def mainloop() -> None:
     display_menu("main")

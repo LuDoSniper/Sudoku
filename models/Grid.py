@@ -8,17 +8,18 @@ class Grid:
     STR_SEP_SQUARE_COL = " "
     STR_SEP_SQUARE_ROW = " "
 
-    def __init__(self, size: int = 9, grid = None) -> None:
+    def __init__(self, size: int = 9, grid: list[list[int]] = None) -> None:
         if size <= 0 or sqrt(size) % 1 != 0:
             raise ValueError("Size must be a positive integer and a perfect square")
-        self.size = size
+        self.size: int = size
 
         if not grid:
             grid = [[0 for _ in range(size)] for _ in range(size)]
         elif len(grid) != size or any(len(row) != size for row in grid):
             raise ValueError("Grid must be a 2D list of size x size. This error can be caused by a wrong size parameter or a wrong grid parameter.")
 
-        self.grid = grid
+        self.grid: list[list[int]] = grid
+        self.player_cells: list[tuple] = []
     
     def get_row(self, index: int) -> list:
         return list(self.grid[index])
@@ -97,16 +98,18 @@ class Grid:
     def __str__(self):
         square_size = int(sqrt(self.size))
         max_width = self.get_max_width()
-        cell_width = max_width + 2  # Ajouter un espace de chaque côté pour l'esthétique
 
         top_border, mid_border, mid_border_sep, bottom_border = self.get_borders()
 
         lines = [top_border]
         for row_index, row in enumerate(self.grid):
             line = []
-            for cell_idx, cell in enumerate(row):
+            for col_index, cell in enumerate(row):
                 if cell != 0:
-                    formatted_cell = Fore.RESET + str(cell).center(max_width)
+                    if (row_index, col_index) in self.player_cells:
+                        formatted_cell = (Fore.MAGENTA + str(cell) + Fore.RESET).center(max_width)
+                    else:
+                        formatted_cell = Fore.RESET + str(cell).center(max_width)
                 else:
                     formatted_cell = ' ' * max_width
 

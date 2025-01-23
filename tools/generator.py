@@ -47,7 +47,7 @@ def generate_full(grid: Grid) -> bool:
 def calibrate(grid: Grid, difficulty: str) -> None:
     difficulties = {
         "easy": (0.3, 0.4),
-        "medium": (0.4, 0.5),
+        "normal": (0.4, 0.5),
         "hard": (0.5, 0.6)
     }
     
@@ -64,6 +64,6 @@ def calibrate(grid: Grid, difficulty: str) -> None:
             removed += 1
 
 
-def generate(grid: Grid) -> None:
+def generate(grid: Grid, difficulty: str) -> None:
     generate_full(grid)
-    calibrate(grid, "easy")
+    calibrate(grid, difficulty)

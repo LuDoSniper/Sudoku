@@ -27,10 +27,10 @@ class TestTechniqueHeuristique(unittest.TestCase):
         self.sudoku_grid_impossible = Grid(4, grid=self.test_grid_4x4_impossible)
 
     def test_technique_heuristique_valid_grid(self):
-        self.assertTrue(technique_heuristic(self.sudoku_grid))
+        self.assertTrue(heuristic_method(self.sudoku_grid))
 
     def test_technique_heuristique_invalid_grid(self):
-        self.assertFalse(technique_heuristic(self.sudoku_grid_impossible))
+        self.assertFalse(heuristic_method(self.sudoku_grid_impossible))
 
 
 if __name__ == '__main__':
