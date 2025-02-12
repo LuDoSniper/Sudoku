@@ -166,7 +166,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     selected_size = None
                     display_menu(current_menu)
         
-        case "up":
+        case "up"|"haut":
             if current_menu == "grid":
                 if cursor_position:
                     if cursor_position[0] > 0:
@@ -175,7 +175,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 else:
                     cursor_position = (0, 0)
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
-        case "down":
+        case "down"|"bas":
             if current_menu == "grid":
                 if cursor_position:
                     if cursor_position[0] < grid.size - 1:
@@ -184,7 +184,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 else:
                     cursor_position = (0, 0)
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
-        case "left":
+        case "left"|"gauche":
             if current_menu == "grid":
                 if cursor_position:
                     if cursor_position[1] > 0:
@@ -193,7 +193,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 else:
                     cursor_position = (0, 0)
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
-        case "right":
+        case "right"|"droite":
             if current_menu == "grid":
                 if cursor_position:
                     if cursor_position[1] < grid.size - 1:
@@ -204,7 +204,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
 
         case _:
-            message("Ceci est un message de debug", "info")
+            message(f"Ceci est un message de debug : {event.name}", "info")
 
 def mainloop() -> None:
     display_menu("main")
