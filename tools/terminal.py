@@ -76,6 +76,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         elif current_menu == "n_import_selection":
                             message("Valeur valide", "success")
                             message("Fonctionnalité non implémentée pour le moment", "info")
+                            grid = Grid(selected_size)
+                            cursor_position = (0, 0)
+                            current_menu = "grid"
+                            display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                     else:
                         selected_size = None
                         display_menu(current_menu, selected_size)
