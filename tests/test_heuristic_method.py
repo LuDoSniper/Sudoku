@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from solvers.heuristic_method import heuristic_method
+from solvers.ite_heuristic import heuristic_method
 from models.Grid import Grid
 
 class TestTechniqueHeuristique(unittest.TestCase):

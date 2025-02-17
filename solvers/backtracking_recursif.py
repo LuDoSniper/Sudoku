@@ -28,9 +28,9 @@ def backtracking_recursif(grid):
     
     row, col = cell
 
-    for i in range(1,size+1):
-        if is_valid(grid, i, row, col):
-            grid.grid[row][col] = i
+    for num in range(1,size+1):
+        if is_valid(grid, num, row, col):
+            grid.grid[row][col] = num
             if backtracking_recursif(grid) is True:
                 return True
             else:
