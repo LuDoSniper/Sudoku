@@ -10,7 +10,10 @@ from math import sqrt
 from models.Grid import Grid
 from tools.generator import generate
 from tools.validator import verify, is_complete
+from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
+from solvers.backtracking_recursif import backtracking_recursif
 from solvers.heuristic_method import heuristic_method
+from solvers.recu_heuristic import backtracking_mrv
 
 # Variables globales
 running = True
@@ -82,7 +85,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu(current_menu, selected_size)
                 elif current_menu == "grid":
                     if cursor_position:
-                        if grid.grid[cursor_position[0]][cursor_position[1]] != 0:
+                        if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and cursor_position in grid.player_cells:
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
                             try:
                                 grid.player_cells.remove(cursor_position)
@@ -144,6 +147,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "solver_selection":
+                    current_menu = "grid"
+                    backtracking_iteratif_pile(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "2":
             match current_menu:
                 case "main":
@@ -163,6 +170,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "solver_selection":
+                    current_menu = "grid"
+                    backtracking_recursif(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "3":
             match current_menu:
                 case "main":
@@ -178,11 +189,19 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "solver_selection":
+                    current_menu = "grid"
+                    heuristic_method(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "4":
             match current_menu:
                 case "classique":
                     current_menu = "n_selection"
                     display_menu(current_menu, selected_size)
+                case "solver_selection":
+                    current_menu = "grid"
+                    backtracking_mrv(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "q":
             match current_menu:
                 case "rules" | "mode_selection":
@@ -201,6 +220,9 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = None
                     cursor_position = None
                     display_menu(current_menu)
+                case "solver_selection":
+                    current_menu = "grid"
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
             selected_difficulty = None
         
         case "up"|"haut":
@@ -255,8 +277,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 display_menu("grid", grid=grid, cursor_position=cursor_position)
         case 'r':
             if current_menu == "grid":
-                heuristic_method(grid, player=True)
-                display_menu("grid", grid=grid, cursor_position=cursor_position)
+                current_menu = "solver_selection"
+                display_menu(current_menu)
 
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")

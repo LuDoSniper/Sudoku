@@ -109,6 +109,21 @@ def difficulty_selection_menu(n: int|None = None) -> None:
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'q. Retour'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
+def solver_selection() -> None:
+    width = 30
+
+    print(get_quit_commands_message())
+    print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.CYAN}{('SUDOKU - SOLVER').center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{'1. Backtracking itératif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{'2. Backtracking récursif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{'3. Heuristique itératif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{'4. Heuristique récursif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {' ' * width} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{'q. Retour'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
+
 def decolor_string(string: str) -> str:
     """
     Retire les couleurs d'une chaîne de caractères
@@ -253,6 +268,8 @@ def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_positi
             n_selection(n)
         case "difficulty_selection":
             difficulty_selection_menu(n)
+        case "solver_selection":
+            solver_selection()
         case "grid":
             grid_menu(grid, cursor_position, imported)
         case _:

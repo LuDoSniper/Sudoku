@@ -30,7 +30,7 @@ def is_valid(grid, num, row, col):
         return False
     return True
 
-def backtracking_mrv(grid):
+def backtracking_mrv(grid, player: bool = False):
     """ Solveur de Sudoku utilisant le backtracking et l'heuristique MRV. """
     size = grid.size
 
@@ -44,6 +44,8 @@ def backtracking_mrv(grid):
     for num in range(1, size + 1):
         if is_valid(grid, num, row, col):
             grid.grid[row][col] = num
+            if player:
+                grid.player_cells.append((row, col))
             if backtracking_mrv(grid):
                 return True
             grid.grid[row][col] = 0  # Backtrack

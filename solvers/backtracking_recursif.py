@@ -18,7 +18,7 @@ def is_valid(grid, num, row, col):
         return False
     return True
 
-def backtracking_recursif(grid):
+def backtracking_recursif(grid, player: bool = False):
     """ Solveur de Sudoku utilisant le backtracking récursif. """
     size = grid.size
     
@@ -31,6 +31,8 @@ def backtracking_recursif(grid):
     for i in range(1,size+1):
         if is_valid(grid, i, row, col):
             grid.grid[row][col] = i
+            if player:
+                grid.player_cells.append((row, col))
             if backtracking_recursif(grid) is True:
                 return True
             else:
