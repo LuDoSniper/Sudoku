@@ -7,6 +7,7 @@ from tools.display_menu import display, message
 from math import sqrt
 from models.Grid import Grid
 from tools.generator import generate
+from tools.validator import verify, is_complete
 
 # Variables globales
 running = True
@@ -38,9 +39,9 @@ def set_terminal_mode(raw: bool = True) -> None:
     else:
         termios.tcsetattr(fd, termios.TCSADRAIN, settings)
 
-def display_menu(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None) -> None:
+def display_menu(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False) -> None:
     clear()
-    display(menu, n=n, grid=grid, cursor_position=cursor_position)
+    display(menu, n=n, grid=grid, cursor_position=cursor_position, imported=imported)
 
 def on_press(event: keyboard.KeyboardEvent) -> None:
     """
@@ -52,7 +53,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     global grid
     global cursor_position
 
-    # Cas spéciale séparé pour une meilleure lisibilité (custom input)
+    # Cas spécial séparé pour une meilleure lisibilité (custom input)
     if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'backspace', 'enter'):
         match event.name:
             case "backspace":
@@ -63,8 +64,12 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     if cursor_position:
                         if grid.grid[cursor_position[0]][cursor_position[1]] != 0:
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
-                            grid.player_cells.remove(cursor_position)
-                            display_menu("grid", grid=grid, cursor_position=cursor_position)
+                            try:
+                                grid.player_cells.remove(cursor_position)
+                            except ValueError: # Lèvera une erreur si l'utilisateur est actuellement en importation
+                                pass
+                            imported = selected_difficulty is None
+                            display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                     else:
                         message("Veuillez sélectionner une case", "error")
             case "enter":
@@ -75,11 +80,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                             display_menu(current_menu, selected_size)
                         elif current_menu == "n_import_selection":
                             message("Valeur valide", "success")
-                            message("Fonctionnalité non implémentée pour le moment", "info")
                             grid = Grid(selected_size)
                             cursor_position = (0, 0)
                             current_menu = "grid"
-                            display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                            display_menu(current_menu, grid=grid, cursor_position=cursor_position, imported=True)
                     else:
                         selected_size = None
                         display_menu(current_menu, selected_size)
@@ -93,8 +97,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         if cursor_position:
                             if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
                                 grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
-                                grid.player_cells.append(cursor_position)
-                                display_menu("grid", grid=grid, cursor_position=cursor_position)
+                                imported = selected_difficulty is None
+                                if not imported:
+                                    grid.player_cells.append(cursor_position)
+                                display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                         else:
                             message("Veuillez sélectionner une case", "error")
 
@@ -169,6 +175,13 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "classique"
                     selected_size = None
                     display_menu(current_menu)
+                case "grid":
+                    current_menu = "main"
+                    selected_size = None
+                    grid = None
+                    cursor_position = None
+                    display_menu(current_menu)
+            selected_difficulty = None
         
         case "up"|"haut":
             if current_menu == "grid":
@@ -206,6 +219,20 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 else:
                     cursor_position = (0, 0)
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
+
+        case 'v':
+            if current_menu == "grid":
+                if is_complete(grid):
+                    if verify(grid):
+                        message("Grille valide", "success")
+                    else:
+                        message("Grille invalide", "error")
+                else:
+                    message("Grille incomplète", "warning")
+        case 'j':
+            if current_menu == "grid" and selected_difficulty is None:
+                selected_difficulty = "easy"
+                display_menu("grid", grid=grid, cursor_position=cursor_position)
 
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")

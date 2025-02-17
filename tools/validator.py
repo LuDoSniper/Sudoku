@@ -4,6 +4,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.Grid import Grid
 from math import sqrt
 
+def is_complete(grid: Grid) -> bool:
+    """
+    Vérifie si une grille est complète.
+    Une grille est complète si elle ne contient aucun zéro.
+    """
+    return all(cell != 0 for row in grid.grid for cell in row)
+
 def verify(grid: Grid) -> bool:
     """
     Vérifie si une grille est valide en respectant les règles du Sudoku.

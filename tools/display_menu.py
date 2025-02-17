@@ -5,6 +5,9 @@ from models.Grid import Grid
 from models.Char import Char
 from math import sqrt
 
+def get_quit_commands_message() -> str:
+    return f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}"
+
 def get_terminal_width() -> int:
     return shutil.get_terminal_size().columns
 
@@ -16,13 +19,15 @@ def message(message: str, type: str) -> None:
             print(f"[{Fore.CYAN}INFO{Fore.RESET}] : {message}")
         case "success":
             print(f"[{Fore.GREEN}SUCCESS{Fore.RESET}] : {message}")
+        case "warning":
+            print(f"[{Fore.YELLOW}WARNING{Fore.RESET}] : {message}")
         case _:
             raise ValueError("Type de message invalide")
 
 def main_menu() -> None:
     width = 30
 
-    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
+    print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{'SUDOKU'.center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
@@ -40,7 +45,7 @@ def rules_menu() -> None:
         formated_rules += f"{Fore.BLUE}│ {Fore.RESET}{line.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}\n"
     formated_rules = formated_rules[:-1]
 
-    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
+    print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{'RÈGLES'.center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {' ' * width} │{Fore.RESET}")
@@ -52,7 +57,7 @@ def rules_menu() -> None:
 def mode_selection_menu() -> None:
     width = 30
     
-    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
+    print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{'SUDOKU'.center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
@@ -65,7 +70,7 @@ def mode_selection_menu() -> None:
 def classique_menu() -> None:
     width = 30
 
-    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
+    print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{'SUDOKU'.center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
@@ -81,7 +86,7 @@ def n_selection(n: int|None = None) -> None:
     width = 30
     n = n if n else ""
 
-    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
+    print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{'SUDOKU'.center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
@@ -93,7 +98,7 @@ def difficulty_selection_menu(n: int|None = None) -> None:
     width = 30
     n = n if n else ""
 
-    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
+    print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{('SUDOKU ' + str(n) + 'x' + str(n)).center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
@@ -195,7 +200,7 @@ def recolor_string(chars: list[Char]) -> str:
         string += char.__str__()
     return string
 
-def grid_menu(grid: Grid, cursor_pos: tuple[int]) -> None:
+def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> None:
     lines = grid.__str__().split("\n")
     index_y, index_x = cursor_pos[0] * 2 + 1, cursor_pos[1] * 4 + 1 + 1
 
@@ -211,11 +216,30 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int]) -> None:
     
     lines[index_y] = recolor_string(selected_line)
 
-    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
+    print(get_quit_commands_message())
     for line in lines:
         print(line)
+    
+    print()
+    if not imported:
+        print(f"Déplacements                   : {Fore.GREEN}flèches directionnelles{Fore.RESET}")
+        print(f"Entrer un nombre               : {Fore.GREEN}1-9{Fore.RESET}")
+        print(f"Supprimer un nombre            : {Fore.GREEN}'backspace'{Fore.RESET}")
+        print(f"Vérifier la grille             : {Fore.GREEN}'v'{Fore.RESET}")
+        print(f"Résoudre la grille             : {Fore.GREEN}'r'{Fore.RESET}")
+        print(f"Quitter vers le menu principal : {Fore.GREEN}'q'{Fore.RESET}")
+    else:
+        print(f"Déplacements                       : {Fore.GREEN}flèches directionnelles{Fore.RESET}")
+        print(f"Entrer un nombre                   : {Fore.GREEN}1-9{Fore.RESET}")
+        print(f"Supprimer un nombre                : {Fore.GREEN}'backspace'{Fore.RESET}")
+        print(f"Vérifier la grille                 : {Fore.GREEN}'v'{Fore.RESET}")
+        print(f"Résoudre la grille                 : {Fore.GREEN}'r'{Fore.RESET}")
+        print(f"Vérifier si il existe une solution : {Fore.GREEN}'s'{Fore.RESET}")
+        print(f"Jouer sur la grille                : {Fore.GREEN}'j'{Fore.RESET}")
+        print(f"Quitter vers le menu principal     : {Fore.GREEN}'q'{Fore.RESET}")
+    print()
 
-def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None) -> None:
+def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False) -> None:
     match menu:
         case "main":
             main_menu()
@@ -230,6 +254,6 @@ def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_positi
         case "difficulty_selection":
             difficulty_selection_menu(n)
         case "grid":
-            grid_menu(grid, cursor_position)
+            grid_menu(grid, cursor_position, imported)
         case _:
             message("Menu invalide", "error")
