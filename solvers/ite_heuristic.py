@@ -1,5 +1,6 @@
 from math import sqrt
 import random
+from models.Grid import Grid
 
 def find_next_empty_mrv(grid, size, square_size):
     """
@@ -48,7 +49,7 @@ def is_valid(grid, num, row, col, square_size):
     return True  # Retourne True si le nombre peut être placé dans la cellule
 
 
-def heuristic_method(grid):
+def heuristic_method(grid: Grid, player: bool = False):
     """
     Génère un Sudoku valide en remplissant la grille avec des valeurs aléatoires.
     """
@@ -71,6 +72,8 @@ def heuristic_method(grid):
 
             if is_valid(grid, attempt, row, col, square_size):
                 grid.grid[row][col] = attempt
+                if player and (row, col) not in grid.player_cells:
+                    grid.player_cells.append((row, col))
                 next_cell = find_next_empty_mrv(grid, size, square_size)
 
                 if not next_cell:
@@ -82,6 +85,8 @@ def heuristic_method(grid):
 
         if not possible_values:
             grid.grid[row][col] = 0  # Annule et revient en arrière si plus d'options
+            if player:
+                grid.player_cells.pop(grid.player_cells.index((row, col)))
 
     return False  # Retourne False si impossible
 

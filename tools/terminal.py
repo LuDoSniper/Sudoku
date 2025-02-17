@@ -14,6 +14,11 @@ from math import sqrt
 from models.Grid import Grid
 from tools.generator import generate
 from models.ChainedList import ChainedList
+from tools.validator import verify, is_complete
+from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
+from solvers.backtracking_recursif import backtracking_recursif
+from solvers.heuristic_method import heuristic_method
+from solvers.recu_heuristic import backtracking_mrv
 
 # Variables globales
 running = True
@@ -69,9 +74,9 @@ def set_terminal_mode(raw: bool = True) -> None:
     else:
         termios.tcsetattr(fd, termios.TCSADRAIN, settings)
 
-def display_menu(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None) -> None:
+def display_menu(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False) -> None:
     clear()
-    display(menu, n=n, grid=grid, cursor_position=cursor_position)
+    display(menu, n=n, grid=grid, cursor_position=cursor_position, imported=imported)
 
 def on_press(event: keyboard.KeyboardEvent) -> None:
     """
@@ -84,7 +89,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     global cursor_position
     global logs
 
-    # Cas spéciale séparé pour une meilleure lisibilité (custom input)
+    # Cas spécial séparé pour une meilleure lisibilité (custom input)
     if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'backspace', 'enter'):
         match event.name:
             case "backspace":
@@ -93,9 +98,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu(current_menu, selected_size)
                 elif current_menu == "grid":
                     if cursor_position:
-                        if grid.grid[cursor_position[0]][cursor_position[1]] != 0:
+                        if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and (cursor_position in grid.player_cells or selected_difficulty is None):
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
-                            logger(logs, cursor_position, event.name)
                             grid.player_cells.remove(cursor_position)
                             display_menu("grid", grid=grid, cursor_position=cursor_position)
                     else:
@@ -108,11 +112,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                             display_menu(current_menu, selected_size)
                         elif current_menu == "n_import_selection":
                             message("Valeur valide", "success")
-                            message("Fonctionnalité non implémentée pour le moment", "info")
                             grid = Grid(selected_size)
                             cursor_position = (0, 0)
                             current_menu = "grid"
-                            display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                            display_menu(current_menu, grid=grid, cursor_position=cursor_position, imported=True)
                     else:
                         selected_size = None
                         display_menu(current_menu, selected_size)
@@ -126,7 +129,6 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         if cursor_position:
                             if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
                                 grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
-                                logger(logs, cursor_position, event.name)
                                 grid.player_cells.append(cursor_position)
                                 display_menu("grid", grid=grid, cursor_position=cursor_position)
                         else:
@@ -152,6 +154,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "solver_selection":
+                    current_menu = "grid"
+                    backtracking_iteratif_pile(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "2":
             match current_menu:
                 case "main":
@@ -171,6 +177,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "solver_selection":
+                    current_menu = "grid"
+                    backtracking_recursif(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "3":
             match current_menu:
                 case "main":
@@ -186,12 +196,15 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
-                    logs = None
         case "4":
             match current_menu:
                 case "classique":
                     current_menu = "n_selection"
                     display_menu(current_menu, selected_size)
+                case "solver_selection":
+                    current_menu = "grid"
+                    backtracking_mrv(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "q":
             match current_menu:
                 case "rules" | "mode_selection":
@@ -204,6 +217,16 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "classique"
                     selected_size = None
                     display_menu(current_menu)
+                case "grid":
+                    current_menu = "main"
+                    selected_size = None
+                    grid = None
+                    cursor_position = None
+                    display_menu(current_menu)
+                case "solver_selection":
+                    current_menu = "grid"
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+            selected_difficulty = None
         
         case "up"|"haut":
             if current_menu == "grid":
@@ -241,6 +264,29 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 else:
                     cursor_position = (0, 0)
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
+
+        case 'v':
+            if current_menu == "grid":
+                if is_complete(grid):
+                    if verify(grid):
+                        message("Grille valide", "success")
+                    else:
+                        message("Grille invalide", "error")
+                else:
+                    message("Grille incomplète", "warning")
+        case 'j':
+            if current_menu == "grid" and selected_difficulty is None:
+                selected_difficulty = "easy"
+                display_menu("grid", grid=grid, cursor_position=cursor_position)
+        case 'r':
+            if current_menu == "grid":
+                current_menu = "solver_selection"
+                display_menu(current_menu)
+        case 's':
+            if current_menu == "grid":
+                if selected_difficulty is None:
+                    result = backtracking_mrv(grid)
+                    message(f"Votre grille {"n'a pas de solution" if not result else "a une solution"}", "success" if result else "error")
 
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")

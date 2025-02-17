@@ -30,7 +30,7 @@ def is_valid(grid, num, row, col, square_size):
 #Meilleur cas : O(1)
 #Pire cas : O(n)
 
-def backtracking_iteratif_pile(grid):
+def backtracking_iteratif_pile(grid, player: bool = False):
     size = grid.size
     square_size = int(sqrt(size))
 
@@ -57,6 +57,8 @@ def backtracking_iteratif_pile(grid):
             if is_valid(grid, attempt, row, col, square_size):
                 # Placer le numéro dans la cellule
                 grid.grid[row][col] = attempt
+                if player and (row, col) not in grid.player_cells:
+                    grid.player_cells.append((row, col))
 
                 # Trouver la prochaine cellule vide
                 next_cell = find_next_empty(grid, size)
@@ -74,6 +76,8 @@ def backtracking_iteratif_pile(grid):
         # Si aucune tentative ne fonctionne, réinitialiser la cellule
         if not solved:
             grid.grid[row][col] = 0
+            if player:
+                grid.player_cells.pop(grid.player_cells.index((row, col)))
 
     return False  # Aucune solution trouvée
 #Meilleur cas : O(1)
