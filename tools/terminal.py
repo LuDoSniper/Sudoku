@@ -1,9 +1,5 @@
-import sys
 import os
-
-# Ajoute le chemin du projet au PATH
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+import sys
 if os.name == "posix":
     import termios
 if os.name == "nt":
@@ -12,12 +8,12 @@ import keyboard
 from tools.display_menu import display, message
 from math import sqrt
 from models.Grid import Grid
-from tools.generator import generate
 from models.ChainedList import ChainedList
+from tools.generator import generate
 from tools.validator import verify, is_complete
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
-from solvers.heuristic_method import heuristic_method
+from solvers.ite_heuristic import heuristic_method
 from solvers.recu_heuristic import backtracking_mrv
 
 # Variables globales
@@ -100,8 +96,12 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     if cursor_position:
                         if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and (cursor_position in grid.player_cells or selected_difficulty is None):
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
-                            grid.player_cells.remove(cursor_position)
-                            display_menu("grid", grid=grid, cursor_position=cursor_position)
+                            try:
+                                grid.player_cells.remove(cursor_position)
+                            except ValueError: # Lèvera une erreur si l'utilisateur est actuellement en importation
+                                pass
+                            imported = selected_difficulty is None
+                            display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                     else:
                         message("Veuillez sélectionner une case", "error")
             case "enter":
@@ -129,8 +129,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         if cursor_position:
                             if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
                                 grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
-                                grid.player_cells.append(cursor_position)
-                                display_menu("grid", grid=grid, cursor_position=cursor_position)
+                                imported = selected_difficulty is None
+                                if not imported:
+                                    grid.player_cells.append(cursor_position)
+                                display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                         else:
                             message("Veuillez sélectionner une case", "error")
 
@@ -195,6 +197,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     cursor_position = (0, 0)
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "solver_selection":
+                    current_menu = "grid"
+                    heuristic_method(grid, player=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "4":
             match current_menu:
