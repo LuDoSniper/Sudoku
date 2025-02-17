@@ -1,5 +1,9 @@
-import os
 import sys
+import os
+
+# Ajoute le chemin du projet au PATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 if os.name == "posix":
     import termios
 import keyboard
@@ -7,6 +11,7 @@ from tools.display_menu import display, message
 from math import sqrt
 from models.Grid import Grid
 from tools.generator import generate
+from models.ChainedList import ChainedList
 
 # Variables globales
 running = True
@@ -15,6 +20,13 @@ selected_size = None
 selected_difficulty = None
 grid = None
 cursor_position = None
+logs: ChainedList = None
+
+def logger(logs, coord, event):
+    if logs is None:
+        logs = ChainedList({"coord" : coord, "nb" : event})
+    else:
+        logs.append({"coord" : coord, "nb" : event})
 
 def clear() -> None:
     """
@@ -51,6 +63,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     global selected_difficulty
     global grid
     global cursor_position
+    global logs
 
     # Cas spéciale séparé pour une meilleure lisibilité (custom input)
     if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'backspace', 'enter'):
@@ -63,6 +76,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     if cursor_position:
                         if grid.grid[cursor_position[0]][cursor_position[1]] != 0:
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
+                            logger(logs, cursor_position, event.name)
                             grid.player_cells.remove(cursor_position)
                             display_menu("grid", grid=grid, cursor_position=cursor_position)
                     else:
@@ -93,6 +107,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         if cursor_position:
                             if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
                                 grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
+                                logger(logs, cursor_position, event.name)
                                 grid.player_cells.append(cursor_position)
                                 display_menu("grid", grid=grid, cursor_position=cursor_position)
                         else:
@@ -152,6 +167,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                    logs = None
         case "4":
             match current_menu:
                 case "classique":
@@ -209,6 +225,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
 
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")
+            message(logs, "info")
 
 def mainloop() -> None:
     display_menu("main")
