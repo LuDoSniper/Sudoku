@@ -211,6 +211,7 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int]) -> None:
     
     lines[index_y] = recolor_string(selected_line)
 
+    print(f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}")
     for line in lines:
         print(line)
 
