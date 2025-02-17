@@ -1,6 +1,7 @@
 import unittest
 import sys
 import os
+import timeit
 
 # Ajoute le chemin du projet au PATH
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -31,6 +32,20 @@ class TestGridGeneration(unittest.TestCase):
         self.assertTrue(verify(grid), "La vérification de la grille 16x16 a échoué")
         calibrate(grid, "easy")  # Calibrage à des fins visuelles
         print(grid)
+    
+    # Prend plus de temps que l'âge de l'univers (c'est con)
+    # def test_25x25_grid(self):
+    #     grid = Grid(25)
+    #     print("Grille créée")
+    #     generate_full(grid)
+    #     print("Grille générée")
+    #     self.assertTrue(verify(grid), "La vérification de la grille 25x25 a échoué")
+    #     print("Grille vérifiée")
+    #     calibrate(grid, "easy")  # Calibrage à des fins visuelles
+    #     print("Grille calibrée")
+    #     print(grid)
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    time_elapsed = timeit.timeit(lambda: unittest.main(), number=1)
+    print(f"Temps d'exécution: {time_elapsed:.2f} secondes")
