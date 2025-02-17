@@ -2,6 +2,8 @@ import os
 import sys
 if os.name == "posix":
     import termios
+if os.name == "nt":
+    import msvcrt
 import keyboard
 from tools.display_menu import display, message
 from math import sqrt
@@ -22,6 +24,23 @@ def clear() -> None:
     Efface le terminal.
     """
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def clear_buffer() -> None:
+    """
+    Vide le buffer du terminal.
+    """
+    sys.stdin.flush()
+    sys.stdout.flush()
+    sys.stderr.flush()
+
+    # Vide le buffer du terminal
+    if os.name == "posix":
+        # Flush le tampon d'entrée (file descriptor de sys.stdin)
+        termios.tcflush(sys.stdin.fileno(), termios.TCIFLUSH)
+    if os.name == "nt":
+        # Tant qu'il y a un caractère en attente, on le lit et l'ignore
+        while msvcrt.kbhit():
+            msvcrt.getch()
 
 def set_terminal_mode(raw: bool = True) -> None:
     """
@@ -251,6 +270,7 @@ def shutdown() -> None:
     Réinitialisation des paramètres avant la fermeture du programme
     """
     keyboard.unhook_all()
+    clear_buffer()
 
     clear()
     message("Fermeture du programme", "info")
