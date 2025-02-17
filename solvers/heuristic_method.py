@@ -72,7 +72,7 @@ def heuristic_method(grid: Grid, player: bool = False):
 
             if is_valid(grid, attempt, row, col, square_size):
                 grid.grid[row][col] = attempt
-                if player:
+                if player and (row, col) not in grid.player_cells:
                     grid.player_cells.append((row, col))
                 next_cell = find_next_empty_mrv(grid, size, square_size)
 
@@ -85,6 +85,8 @@ def heuristic_method(grid: Grid, player: bool = False):
 
         if not possible_values:
             grid.grid[row][col] = 0  # Annule et revient en arrière si plus d'options
+            if player:
+                grid.player_cells.pop(grid.player_cells.index((row, col)))
 
     return False  # Retourne False si impossible
 

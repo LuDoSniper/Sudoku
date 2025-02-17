@@ -57,7 +57,7 @@ def backtracking_iteratif_pile(grid, player: bool = False):
             if is_valid(grid, attempt, row, col, square_size):
                 # Placer le numéro dans la cellule
                 grid.grid[row][col] = attempt
-                if player:
+                if player and (row, col) not in grid.player_cells:
                     grid.player_cells.append((row, col))
 
                 # Trouver la prochaine cellule vide
@@ -76,6 +76,8 @@ def backtracking_iteratif_pile(grid, player: bool = False):
         # Si aucune tentative ne fonctionne, réinitialiser la cellule
         if not solved:
             grid.grid[row][col] = 0
+            if player:
+                grid.player_cells.pop(grid.player_cells.index((row, col)))
 
     return False  # Aucune solution trouvée
 #Meilleur cas : O(1)

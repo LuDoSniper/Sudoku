@@ -85,7 +85,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu(current_menu, selected_size)
                 elif current_menu == "grid":
                     if cursor_position:
-                        if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and cursor_position in grid.player_cells:
+                        if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and (cursor_position in grid.player_cells or selected_difficulty is None):
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
                             try:
                                 grid.player_cells.remove(cursor_position)
@@ -279,6 +279,11 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             if current_menu == "grid":
                 current_menu = "solver_selection"
                 display_menu(current_menu)
+        case 's':
+            if current_menu == "grid":
+                if selected_difficulty is None:
+                    result = backtracking_mrv(grid)
+                    message(f"Votre grille {"n'a pas de solution" if not result else "a une solution"}", "success" if result else "error")
 
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")

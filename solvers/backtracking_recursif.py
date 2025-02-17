@@ -31,12 +31,14 @@ def backtracking_recursif(grid, player: bool = False):
     for i in range(1,size+1):
         if is_valid(grid, i, row, col):
             grid.grid[row][col] = i
-            if player:
+            if player and (row, col) not in grid.player_cells:
                 grid.player_cells.append((row, col))
             if backtracking_recursif(grid) is True:
                 return True
             else:
                 grid.grid[row][col] = 0
+                if player:
+                    grid.player_cells.pop(grid.player_cells.index((row, col)))
 
 
     return False
