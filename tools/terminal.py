@@ -10,6 +10,7 @@ from math import sqrt
 from models.Grid import Grid
 from tools.generator import generate
 from tools.validator import verify, is_complete
+from solvers.heuristic_method import heuristic_method
 
 # Variables globales
 running = True
@@ -251,6 +252,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
         case 'j':
             if current_menu == "grid" and selected_difficulty is None:
                 selected_difficulty = "easy"
+                display_menu("grid", grid=grid, cursor_position=cursor_position)
+        case 'r':
+            if current_menu == "grid":
+                heuristic_method(grid, player=True)
                 display_menu("grid", grid=grid, cursor_position=cursor_position)
 
         case _:
