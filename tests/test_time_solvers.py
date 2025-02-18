@@ -1,17 +1,19 @@
 import sys
 import os
+import timeit
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+from models.Grid import Grid
+from models.SudokuGraphe import SudokuGraphe
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
 from solvers.ite_heuristic import ite_heuristic_method
 from solvers.recu_heuristic import recu_heuristic_method
-from tools.get_time import get_time
+from solvers.coloration_graphe import colorier_sudoku
 from tools.generator import generate_full, calibrate
-from models.Grid import Grid
-import timeit
+from tools.dessiner_graphe_sudoku import dessiner_graphe_sudoku
 
-grid = Grid(16)
+grid = Grid(4)
 generate_full(grid)
 calibrate(grid, "easy")  # Calibrage à des fins visuelles
 
@@ -21,6 +23,15 @@ calibrate(grid, "easy")  # Calibrage à des fins visuelles
 # iteratif = timeit.timeit(lambda: backtracking_iteratif_pile(grid), number=1)
 # print(f"Temps d'exécution pour l'iteratif: {iteratif:.2f} secondes")
 
-heuristique = timeit.timeit(lambda: ite_heuristic_method(grid), number=1)
-print(f"Temps d'exécution pour le heuristique: {heuristique:.2f} secondes")
-# print(f"Validité de la grille: {heuristic_method(grid)}")
+# heuristique_ite = timeit.timeit(lambda: ite_heuristic_method(grid), number=1)
+# print(f"Temps d'exécution pour le heuristique: {heuristique_ite:.2f} secondes")
+
+# heuristique_recu = timeit.timeit(lambda: recu_heuristic_method(grid), number=1)
+# print(f"Temps d'exécution pour le heuristique: {heuristique_recu:.2f} secondes")
+
+
+sudoku_graphe = SudokuGraphe(grid)
+
+dessiner_graphe_sudoku(sudoku_graphe)
+colorier_sudoku(sudoku_graphe)
+dessiner_graphe_sudoku(sudoku_graphe)
