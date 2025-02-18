@@ -45,10 +45,46 @@ class ChainedList:
         new.set_prev(current)
         current.set_next(new)
     
-    def pop(self, index: int = -1, data: bool = True) -> dict | ChainedList:
+    def pop(self, index: int = -1, data: bool = True) -> tuple[ChainedList, dict|ChainedList]:
         """
-        Enlève l'élément à l'index spécifié de la liste chaînée et le retourne.
-        Retourne la data si data = True ou retourne l'objet ChainedList si data = False.
+        Enlève l'élément à l'index spécifié de la liste chaînée et retourne un tuple de cette forme : (head, <data>)
+        où <data> est élément.data si data = True ou l'objet ChainedList popé si data = False.
+        """
+
+        # Convertir l'index négatif en index positif
+        if index < 0:
+            index = self.get_size() + index
+        
+        # Cas du premier élément
+        if index == 0:
+            if data:
+                return (self.get_next(), self.get_data())
+            return (self.get_next(), self)
+        
+        # Cas des autres éléments
+        head = self
+        current = self
+        i = 0
+        while i < index:
+            try:
+                current = current.get_next()
+            except Exception:
+                raise IndexError("Index out of range")
+            i += 1
+        
+        prev = current.get_prev()
+        next = current.get_next()
+        prev.set_next(next)
+        if next:
+            next.set_prev(prev)
+
+        if data:
+            return (head, current.get_data())
+        return (head, current)
+
+    def remove(self, index: int = -1) -> None:
+        """
+        Tanguy met une description ici
         """
         current = self
         
