@@ -193,7 +193,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "indice_selection":
                     current_menu = "grid"
+                    grid_list = copy.deepcopy(grid.grid)
                     backtracking_recursif(grid, indice=True)
+                    grid.grid = grid_list
+                    grid.activate_indice_buffer()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "3":
             match current_menu:
@@ -238,7 +241,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "indice_selection":
                     current_menu = "grid"
+                    grid_list = copy.deepcopy(grid.grid)
                     recu_heuristic_method(grid, indice=True)
+                    grid.grid = grid_list
+                    grid.activate_indice_buffer()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "q":
             match current_menu:
@@ -332,8 +338,11 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     message("Aucun coup à annuler", "warning")
         case 'i':
             if current_menu == "grid":
-                current_menu = "indice_selection"
-                display_menu(current_menu)
+                if not is_complete(grid):
+                    current_menu = "indice_selection"
+                    display_menu(current_menu)
+                else:
+                    message("Grille complète", "warning")
         case 'v':
             if current_menu == "grid":
                 if is_complete(grid):

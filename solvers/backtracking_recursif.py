@@ -3,7 +3,7 @@ from math import sqrt
 from tools.find_next_empty import find_next_empty
 from tools.is_valid import is_valid
 
-def backtracking_recursif(grid, player: bool = False):
+def backtracking_recursif(grid, player: bool = False, indice: bool = False):
     """ Solveur de Sudoku utilisant le backtracking récursif avec choix aléatoire des valeurs. """
     size = grid.size
     
@@ -20,11 +20,15 @@ def backtracking_recursif(grid, player: bool = False):
             grid.grid[row][col] = num
             if player and (row, col) not in grid.player_cells:
                 grid.player_cells.append((row, col))
-            if backtracking_recursif(grid, player=player):
+            if indice and (row, col, num) not in grid.indice_cells:
+                grid.indice_cells_buffer.append((row, col, num))
+            if backtracking_recursif(grid, player=player, indice=indice):
                 return True
             
             grid.grid[row][col] = 0
             if player:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
+            if indice and (row, col, num) in grid.indice_cells_buffer:
+                grid.indice_cells_buffer.pop(grid.indice_cells_buffer_tmp.index((row, col, num)))
     
     return False
