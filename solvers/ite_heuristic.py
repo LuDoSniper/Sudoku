@@ -5,7 +5,7 @@ from tools.find_next_empty import find_next_empty_mrv
 from tools.is_valid import is_valid
 
 
-def heuristic_method(grid: Grid, player: bool = False):
+def ite_heuristic_method(grid: Grid, player: bool = False):
     """
     Génère un Sudoku valide en remplissant la grille avec des valeurs aléatoires.
     """
@@ -44,5 +44,4 @@ def heuristic_method(grid: Grid, player: bool = False):
             if player:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
 
-    return False  # Retourne False si impossible
-
+    return False  # Retourne False si impossible  
