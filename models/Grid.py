@@ -1,3 +1,4 @@
+import random
 from math import sqrt
 from colorama import init as colorama_init, Fore, Style
 
@@ -20,6 +21,8 @@ class Grid:
 
         self.grid: list[list[int]] = grid
         self.player_cells: list[tuple] = []
+        self.indice_cells: list[tuple] = []
+        self.indice_cells_buffer: list[tuple] = []
     
     def get_row(self, index: int) -> list:
         return list(self.grid[index])
@@ -94,6 +97,11 @@ class Grid:
 
         return top_border, mid_border, mid_border_sep, bottom_border
 
+    def activate_indice_buffer(self) -> None:
+        indice = random.choice(self.indice_cells_buffer)
+        self.indice_cells.append((indice[0], indice[1]))
+        self.grid[indice[0]][indice[1]] = indice[2]
+        self.indice_cells_buffer = []
 
     def __str__(self):
         square_size = int(sqrt(self.size))
@@ -108,6 +116,8 @@ class Grid:
                 if cell != 0:
                     if (row_index, col_index) in self.player_cells:
                         formatted_cell = (Fore.MAGENTA + str(cell) + Fore.RESET).center(max_width)
+                    elif (row_index, col_index) in self.indice_cells:
+                        formatted_cell = (Fore.LIGHTMAGENTA_EX + str(cell) + Fore.RESET).center(max_width)
                     else:
                         formatted_cell = Fore.RESET + str(cell).center(max_width)
                 else:

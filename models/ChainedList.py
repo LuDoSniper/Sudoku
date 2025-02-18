@@ -45,22 +45,69 @@ class ChainedList:
         new.set_prev(current)
         current.set_next(new)
     
-    def pop(self, index: int = -1, data: bool = True) -> dict|ChainedList:
+    def pop(self, index: int = -1, data: bool = True) -> tuple[ChainedList, dict|ChainedList]:
         """
-        Enlève le dernier élément de la liste chaînée et le retourne.
-        Retourne la data si data = True ou retourne l'objet ChainedList si data = False.
+        Enlève l'élément à l'index spécifié de la liste chaînée et retourne un tuple de cette forme : (head, <data>)
+        où <data> est élément.data si data = True ou l'objet ChainedList popé si data = False.
         """
+
+        # Convertir l'index négatif en index positif
         if index < 0:
             index = self.get_size() + index
-
+        
+        # Cas du premier élément
+        if index == 0:
+            if data:
+                return (self.get_next(), self.get_data())
+            return (self.get_next(), self)
+        
+        # Cas des autres éléments
+        head = self
         current = self
         i = 0
         while i < index:
-            if current.get_next() is None:
+            try:
+                current = current.get_next()
+            except Exception:
                 raise IndexError("Index out of range")
-            current = current.get_next()
-        current.get_prev().set_next(None)
-        current.set_prev(None)
+            i += 1
+        
+        prev = current.get_prev()
+        next = current.get_next()
+        prev.set_next(next)
+        if next:
+            next.set_prev(prev)
+
         if data:
-            return current.get_data()
-        return current
+            return (head, current.get_data())
+        return (head, current)
+
+    def remove(self, index: int = -1) -> None:
+        """
+        Tanguy met une description ici
+        """
+        current = self
+        
+        if self.get_next is None:
+            self = None
+
+        if index == -1:
+            
+            while current.get_next != None:
+                previous = current
+                current = current.get_next
+
+            previous.set_next = None
+        
+        else:
+            i = 0
+            while i < index:
+                current = current.get_next
+            next = current.get_next
+            prev = current.get_prev
+            prev.set_next(next)
+
+    
+    def __str__(self):
+        # Retourne la représentation en chaîne de caractères de la donnée du noeud actuel
+        return str(self.get_data())

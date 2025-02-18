@@ -3,7 +3,7 @@ from tools.find_next_empty import find_next_empty_mrv
 from tools.is_valid import is_valid
 import random
 
-def recu_heuristic_method(grid, player: bool = False):
+def recu_heuristic_method(grid, player: bool = False, indice: bool = False):
     """
     Solveur de Sudoku utilisant le backtracking et l'heuristique MRV avec un choix aléatoire des valeurs.
     """
@@ -22,11 +22,15 @@ def recu_heuristic_method(grid, player: bool = False):
             grid.grid[row][col] = num
             if player and (row, col) not in grid.player_cells:
                 grid.player_cells.append((row, col))
+            if indice and (row, col, num) not in grid.indice_cells:
+                grid.indice_cells_buffer.append((row, col, num))
             if recu_heuristic_method(grid, player):
                 return True
             
             grid.grid[row][col] = 0  # Backtrack
             if player:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
+            if indice and (row, col, num) in grid.indice_cells_buffer:
+                grid.indice_cells_buffer.pop(grid.indice_cells_buffer_tmp.index((row, col, num)))
     
     return False

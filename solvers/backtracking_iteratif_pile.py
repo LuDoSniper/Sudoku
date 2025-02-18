@@ -1,10 +1,13 @@
 import random
-from math import sqrt
 from tools.find_next_empty import find_next_empty
 from tools.is_valid import is_valid
 
-def backtracking_iteratif_pile(grid, player: bool = False):
+def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False):
     size = grid.size
+
+    # Initialiser les "logs" des actions effectuées pour l'indice
+    if indice:
+        logs = []
 
     # Initialiser la pile pour gérer les états
     stack = []
@@ -31,11 +34,21 @@ def backtracking_iteratif_pile(grid, player: bool = False):
                 grid.grid[row][col] = attempt
                 if player and (row, col) not in grid.player_cells:
                     grid.player_cells.append((row, col))
+                if indice and (row, col) not in logs:
+                    logs.append((row, col))
 
                 # Trouver la prochaine cellule vide
                 next_cell = find_next_empty(grid, size)
 
                 if not next_cell:
+                    # Ne laisser qu'une seule case remplie pour l'indice
+                    if indice:
+                        if len(logs) > 1:
+                            random.shuffle(logs)
+                            for log in logs[1:]:
+                                grid.grid[log[0]][log[1]] = 0
+                        grid.indice_cells.append((logs[0][0], logs[0][1]))
+
                     return True  # Résolution terminée
 
                 # Ajouter l'état suivant à la pile
@@ -50,5 +63,7 @@ def backtracking_iteratif_pile(grid, player: bool = False):
             grid.grid[row][col] = 0
             if player:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
+            if indice and (row, col) in logs:
+                logs.pop(logs.index((row, col)))
 
     return False  # Aucune solution trouvée
