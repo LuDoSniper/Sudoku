@@ -59,8 +59,15 @@ class ChainedList:
             if current.get_next() is None:
                 raise IndexError("Index out of range")
             current = current.get_next()
-        current.get_prev().set_next(None)
+            i += 1
+        if i > 0:
+            current.get_prev().set_next(current.get_next())
+            if i < self.get_size() - 1:
+                current.get_next().set_prev(current.get_prev())
+        else:
+            current.get_next().set_prev(None)
         current.set_prev(None)
+        current.set_next(None)
         if data:
             return current.get_data()
         return current
