@@ -12,7 +12,7 @@ from models.Grid import Grid
 from models.ChainedList import ChainedList
 from tools.generator import generate
 from tools.validator import verify, is_complete
-from tools.logger import log, unlog, get_logs, init as init_logs, clear_logs
+from tools.logger import log, unlog, get_logs, init as init_logs, chained_list_to_string as get_str_logs, get_tail
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
 from solvers.ite_heuristic import ite_heuristic_method
@@ -25,13 +25,7 @@ selected_size = None
 selected_difficulty = None
 grid = None
 cursor_position = None
-logs: ChainedList = None
 
-def logger(logs, coord, event):
-    if logs is None:
-        logs = ChainedList({"coord" : coord, "nb" : event})
-    else:
-        logs.append({"coord" : coord, "nb" : event})
 
 def clear() -> None:
     """
@@ -98,6 +92,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     if cursor_position:
                         if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and (cursor_position in grid.player_cells or selected_difficulty is None):
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
+                            log({"coords" : cursor_position, "nb" : event.name})
                             try:
                                 grid.player_cells.remove(cursor_position)
                             except ValueError: # Lèvera une erreur si l'utilisateur est actuellement en importation
@@ -131,6 +126,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         if cursor_position:
                             if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
                                 grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
+                                log({"coords" : cursor_position, "nb" : event.name})
                                 imported = selected_difficulty is None
                                 if not imported:
                                     grid.player_cells.append(cursor_position)
@@ -310,7 +306,30 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
 
         case 'b':
             if current_menu == "grid":
-                message("C'est là Tanguy pour le back (log)", "info")
+                tail = get_tail()
+                if tail is not None:
+                    data = tail.get_data()
+                    coords = data.get("coords")
+                    event = data.get("event")
+
+                    if event == "backspace":
+                        # Si le dernier log est un "backspace", on restaure la valeur précédente
+                        prev = tail.get_prev()
+                        if prev is not None:
+                            prev_data = prev.get_data()
+                            prev_coords = prev_data.get("coords")
+                            prev_event = prev_data.get("event")
+                            grid.grid[prev_coords[0]][prev_coords[1]] = int(prev_event)
+                            unlog()  # Supprimer le dernier log
+                    else:
+                        # Sinon, on annule le dernier coup joué
+                        grid.grid[coords[0]][coords[1]] = 0
+                        unlog()  # Supprimer le dernier log
+
+                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+                    message("Dernier coup annulé", "info")
+                else:
+                    message("Aucun coup à annuler", "warning")
         case 'i':
             if current_menu == "grid":
                 current_menu = "indice_selection"
@@ -328,6 +347,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             if current_menu == "grid" and selected_difficulty is None:
                 selected_difficulty = "easy"
                 display_menu("grid", grid=grid, cursor_position=cursor_position)
+                logs = init_logs()
         case 'r':
             if current_menu == "grid":
                 current_menu = "solver_selection"
@@ -342,7 +362,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
 
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")
-            message(logs, "info")
+            message(get_str_logs(), "info")
 
 def mainloop() -> None:
     display_menu("main")
