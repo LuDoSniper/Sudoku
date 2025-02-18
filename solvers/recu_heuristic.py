@@ -46,7 +46,7 @@ def backtracking_mrv(grid, player: bool = False):
             grid.grid[row][col] = num
             if player and (row, col) not in grid.player_cells:
                 grid.player_cells.append((row, col))
-            if backtracking_mrv(grid):
+            if backtracking_mrv(grid, player):
                 return True
             grid.grid[row][col] = 0  # Backtrack
             if player:
