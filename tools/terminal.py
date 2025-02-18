@@ -12,7 +12,7 @@ from models.Grid import Grid
 from models.ChainedList import ChainedList
 from tools.generator import generate
 from tools.validator import verify, is_complete
-from tools.logger import log, unlog, get_logs, init as init_logs, chained_list_to_string as get_str_logs
+from tools.logger import log, unlog, get_logs, init as init_logs, chained_list_to_string as get_str_logs, get_tail
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
 from solvers.ite_heuristic import ite_heuristic_method
@@ -290,10 +290,31 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
 
         case 'b':
             if current_menu == "grid":
-                message("C'est là Tanguy pour le back (log)", "info")
-        case 'i':
-            if current_menu == "grid":
-                message("C'est là Tanguy pour l'indice", "info")
+                tail = get_tail()
+                if tail is not None:
+                    data = tail.get_data()
+                    coords = data.get("coords")
+                    event = data.get("event")
+
+                    if event == "backspace":
+                        # Si le dernier log est un "backspace", on restaure la valeur précédente
+                        prev = tail.get_prev()
+                        if prev is not None:
+                            prev_data = prev.get_data()
+                            prev_coords = prev_data.get("coords")
+                            prev_event = prev_data.get("event")
+                            grid.grid[prev_coords[0]][prev_coords[1]] = int(prev_event)
+                            unlog()  # Supprimer le dernier log
+                    else:
+                        # Sinon, on annule le dernier coup joué
+                        grid.grid[coords[0]][coords[1]] = 0
+                        unlog()  # Supprimer le dernier log
+
+                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+                    message("Dernier coup annulé", "info")
+                else:
+                    message("Aucun coup à annuler", "warning")
+
         case 'v':
             if current_menu == "grid":
                 if is_complete(grid):

@@ -45,32 +45,32 @@ class ChainedList:
         new.set_prev(current)
         current.set_next(new)
     
-    def pop(self, index: int = -1, data: bool = True) -> dict|ChainedList:
+    def pop(self, index: int = -1, data: bool = True) -> dict | ChainedList:
         """
-        Enlève le dernier élément de la liste chaînée et le retourne.
+        Enlève l'élément à l'index spécifié de la liste chaînée et le retourne.
         Retourne la data si data = True ou retourne l'objet ChainedList si data = False.
         """
-        if index < 0:
-            index = self.get_size() + index
-
         current = self
-        i = 0
-        while i < index:
-            if current.get_next() is None:
-                raise IndexError("Index out of range")
-            current = current.get_next()
-            i += 1
-        if i > 0:
-            current.get_prev().set_next(current.get_next())
-            if i < self.get_size() - 1:
-                current.get_next().set_prev(current.get_prev())
+        
+        if self.get_next is None:
+            self = None
+
+        if index == -1:
+            
+            while current.get_next != None:
+                previous = current
+                current = current.get_next
+
+            previous.set_next = None
+        
         else:
-            current.get_next().set_prev(None)
-        current.set_prev(None)
-        current.set_next(None)
-        if data:
-            return current.get_data()
-        return current
+            i = 0
+            while i < index:
+                current = current.get_next
+            next = current.get_next
+            prev = current.get_prev
+            prev.set_next(next)
+
     
     def __str__(self):
         # Retourne la représentation en chaîne de caractères de la donnée du noeud actuel
