@@ -5,6 +5,7 @@ if os.name == "posix":
 if os.name == "nt":
     import msvcrt
 import keyboard
+import copy
 from tools.display_menu import display, message
 from math import sqrt
 from models.Grid import Grid
@@ -233,41 +234,48 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
         
         case "up"|"haut":
             if current_menu == "grid":
+                imported = selected_difficulty is None
                 if cursor_position:
                     if cursor_position[0] > 0:
                         cursor_position = (cursor_position[0] - 1, cursor_position[1])
-                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                        display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                 else:
                     cursor_position = (0, 0)
-                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
         case "down"|"bas":
+            imported = selected_difficulty is None
             if current_menu == "grid":
                 if cursor_position:
                     if cursor_position[0] < grid.size - 1:
                         cursor_position = (cursor_position[0] + 1, cursor_position[1])
-                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                        display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                 else:
                     cursor_position = (0, 0)
-                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
         case "left"|"gauche":
+            imported = selected_difficulty is None
             if current_menu == "grid":
                 if cursor_position:
                     if cursor_position[1] > 0:
                         cursor_position = (cursor_position[0], cursor_position[1] - 1)
-                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                        display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                 else:
                     cursor_position = (0, 0)
-                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
         case "right"|"droite":
+            imported = selected_difficulty is None
             if current_menu == "grid":
                 if cursor_position:
                     if cursor_position[1] < grid.size - 1:
                         cursor_position = (cursor_position[0], cursor_position[1] + 1)
-                        display_menu("grid", grid=grid, cursor_position=cursor_position)
+                        display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
                 else:
                     cursor_position = (0, 0)
-                    display_menu("grid", grid=grid, cursor_position=cursor_position)
+                    display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
 
+        case 'b':
+            if current_menu == "grid":
+                message("C'est là Tanguy", "info")
         case 'v':
             if current_menu == "grid":
                 if is_complete(grid):
@@ -289,7 +297,9 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
         case 's':
             if current_menu == "grid":
                 if selected_difficulty is None:
+                    grid_list = copy.deepcopy(grid.grid)
                     result = backtracking_mrv(grid)
+                    grid.grid = grid_list
                     message(f"Votre grille {"n'a pas de solution" if not result else "a une solution"}", "success" if result else "error")
 
         case _:

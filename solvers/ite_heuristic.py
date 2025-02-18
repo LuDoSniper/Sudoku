@@ -1,55 +1,11 @@
 from math import sqrt
 import random
 from models.Grid import Grid
-
-def find_next_empty_mrv(grid, size, square_size):
-    """
-    Trouve la prochaine case vide en utilisant la heuristique MRV (Minimum Remaining Values),
-    c'est-à-dire la case avec le moins d'options possibles.
-    """
-    min_options = size + 1  # Initialise avec une valeur plus grande que le maximum possible (size)
-    best_cell = None  # Variable pour stocker la meilleure case trouvée
-
-    for row in range(size):
-        for col in range(size):
-            if grid.grid[row][col] == 0:  # Vérifie si la case est vide
-                possible_values = {num for num in range(1, size + 1) if is_valid(grid, num, row, col, square_size)}
-                num_options = len(possible_values)
-
-                if num_options < min_options:
-                    min_options = num_options  # Met à jour le minimum d'options possibles
-                    best_cell = (row, col)  # Met à jour la meilleure case
-
-                # Si une case n'a qu'une seule possibilité, on la choisit immédiatement
-                if min_options == 1:
-                    break  
-        if min_options == 1:
-            break  
-
-    return best_cell  # Retourne la case la plus contrainte ou None si aucune case vide
-
-def is_valid(grid, num, row, col, square_size):
-    """
-    Vérifie si un nombre peut être placé dans une cellule donnée.
-    """
-    # Vérifie si le nombre est déjà présent dans la ligne
-    if num in grid.get_row(row):
-        return False
-
-    # Vérifie si le nombre est déjà présent dans la colonne
-    if num in grid.get_col(col):
-        return False
-
-    # Vérifie si le nombre est déjà présent dans le carré correspondant
-    square_row = (row // square_size) * square_size
-    square_col = (col // square_size) * square_size
-    if num in grid.get_square(square_row, square_col):
-        return False
-
-    return True  # Retourne True si le nombre peut être placé dans la cellule
+from tools.find_next_empty import find_next_empty_mrv
+from tools.is_valid import is_valid
 
 
-def heuristic_method(grid: Grid, player: bool = False):
+def ite_heuristic_method(grid: Grid, player: bool = False):
     """
     Génère un Sudoku valide en remplissant la grille avec des valeurs aléatoires.
     """
@@ -88,5 +44,4 @@ def heuristic_method(grid: Grid, player: bool = False):
             if player:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
 
-    return False  # Retourne False si impossible
-
+    return False  # Retourne False si impossible  
