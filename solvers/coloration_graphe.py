@@ -1,60 +1,62 @@
 import sys
 import os
-import networkx as nx
-import matplotlib.pyplot as plt
-import numpy as np
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from models.SudokuGraphe import SudokuGraphe
-from models.Grid import Grid
-from tools.generator import generate_full, calibrate
-import networkx as nx
-import matplotlib.pyplot as plt
 
-def dessiner_graphe_sudoku(sudoku_graphe):
-    """Dessine le graphe du Sudoku en affichant les valeurs des nœuds."""
-    G = nx.Graph()
-
-    # Ajouter les sommets et arêtes
-    for sommet, voisins in sudoku_graphe.adjacence.items():
-        G.add_node(sommet)
-        for voisin in voisins['liens']:
-            G.add_edge(sommet, voisin)
-
-    # Positionnement des nœuds
-    pos = nx.spring_layout(G, seed=42, k=0.5)
-
-    # Dessiner le graphe
-    nx.draw(G, pos, with_labels=False, node_color='blue', edge_color='gray', node_size=700)
-
-    # Ajouter les valeurs des nœuds
-    labels = {n: sudoku_graphe.valeurs.get(n, "?") for n in G.nodes()}  # Utilise la valeur si dispo, sinon '?'
-    nx.draw_networkx_labels(G, pos, labels=labels, font_size=12, font_color="white")
-
-    plt.title("Graphe du Sudoku (Valeurs des nœuds)")
-    plt.axis("off")  
-    plt.show()
-
-
-def sudoku_to_dict(grid_instance: Grid) -> dict:
+def valide(sudoku_graphe, cellule, valeur):
     """
-    Convertit une instance de Grid en un dictionnaire où chaque clé est un tuple (row, col)
-    représentant les coordonnées de la cellule, et la valeur est le nombre correspondant dans la grille.
+    Vérifie si la valeur peut être placée dans la cellule sans violer les règles du Sudoku.
     """
-    valeurs_noeuds = {}
-    for row_index, row in enumerate(grid_instance.grid):
-        for col_index, value in enumerate(row):
-            valeurs_noeuds[(row_index, col_index)] = value
+    voisins = sudoku_graphe.adjacence[cellule]['liens']
+
+    for voisin in voisins:
+        if sudoku_graphe.valeurs[voisin] == valeur:  # Conflit avec un voisin
+            return False
     
-    return valeurs_noeuds
+    return True  # Valeur valide
 
-# Exemple d'utilisation :
-grid = Grid(4)
-generate_full(grid)
-calibrate(grid, "easy")
-print(grid)
 
-valeurs_noeuds = sudoku_to_dict(grid)
+def resolve(sudoku_graphe, liste_cellules, index):
+    """
+    Tente de résoudre le Sudoku en essayant différentes valeurs dans chaque cellule.
+    """
+    # Si toutes les cellules sont remplies, on a terminé
+    if index == len(liste_cellules):
+        return True
 
-sudoku_graphe = SudokuGraphe(grid)
-print(sudoku_graphe)
-dessiner_graphe_sudoku(sudoku_graphe)
+    # Récupérer la cellule actuelle
+    cellule = liste_cellules[index]
+
+    # Si la cellule a déjà une valeur, passer à la suivante
+    if sudoku_graphe.valeurs[cellule] != 0:
+        return resolve(sudoku_graphe, liste_cellules, index + 1)
+
+    # Essayer toutes les valeurs possibles (1 à taille)
+    for valeur in range(1, sudoku_graphe.size + 1):
+        if valide(sudoku_graphe, cellule, valeur):
+            # Assigner la valeur
+            sudoku_graphe.valeurs[cellule] = valeur
+            sudoku_graphe.adjacence[cellule]['valeur'] = valeur
+
+            # Continuer avec la cellule suivante
+            if resolve(sudoku_graphe, liste_cellules, index + 1):
+                return True  # Succès, on arrête
+
+            # Si la valeur ne fonctionne pas, annuler
+            sudoku_graphe.valeurs[cellule] = 0
+            sudoku_graphe.adjacence[cellule]['valeur'] = 0
+
+    # Si aucune valeur ne fonctionne, retour arrière
+    return False
+
+
+def colorier_sudoku(sudoku_graphe):
+    """
+    Remplit le Sudoku en utilisant un algorithme de coloration de graphe.
+    Modifie directement le SudokuGraphe donné en argument.
+    """
+    # Récupérer la liste des cellules du graphe
+    liste_cellules = list(sudoku_graphe.adjacence.keys())
+
+    # Lancer la résolution
+    resolve(sudoku_graphe, liste_cellules, 0)
+
