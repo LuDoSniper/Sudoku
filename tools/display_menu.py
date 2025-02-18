@@ -109,12 +109,12 @@ def difficulty_selection_menu(n: int|None = None) -> None:
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'q. Retour'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
-def solver_selection() -> None:
+def algo_selection(solver: bool = True) -> None:
     width = 30
 
     print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.CYAN}{('SUDOKU - SOLVER').center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.CYAN}{(f"SUDOKU - {"SOLVER" if solver else "GENERATOR"}").center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'1. Backtracking itératif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'2. Backtracking récursif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
@@ -241,6 +241,7 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
         print(f"Entrer un nombre               : {Fore.GREEN}1-9{Fore.RESET}")
         print(f"Supprimer un nombre            : {Fore.GREEN}'backspace'{Fore.RESET}")
         print(f"Annuler                        : {Fore.GREEN}'b'{Fore.RESET}")
+        print(f"Indice                         : {Fore.GREEN}'i'{Fore.RESET}")
         print(f"Vérifier la grille             : {Fore.GREEN}'v'{Fore.RESET}")
         print(f"Résoudre la grille             : {Fore.GREEN}'r'{Fore.RESET}")
         print(f"Quitter vers le menu principal : {Fore.GREEN}'q'{Fore.RESET}")
@@ -249,6 +250,7 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
         print(f"Entrer un nombre                   : {Fore.GREEN}1-9{Fore.RESET}")
         print(f"Supprimer un nombre                : {Fore.GREEN}'backspace'{Fore.RESET}")
         print(f"Annuler                            : {Fore.GREEN}'b'{Fore.RESET}")
+        print(f"Indice                             : {Fore.GREEN}'i'{Fore.RESET}")
         print(f"Vérifier la grille                 : {Fore.GREEN}'v'{Fore.RESET}")
         print(f"Résoudre la grille                 : {Fore.GREEN}'r'{Fore.RESET}")
         print(f"Vérifier si il existe une solution : {Fore.GREEN}'s'{Fore.RESET}")
@@ -271,7 +273,9 @@ def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_positi
         case "difficulty_selection":
             difficulty_selection_menu(n)
         case "solver_selection":
-            solver_selection()
+            algo_selection()
+        case "generator_selection":
+            algo_selection(solver=False)
         case "grid":
             grid_menu(grid, cursor_position, imported)
         case _:

@@ -1,11 +1,9 @@
 import random
-from math import sqrt
 from tools.find_next_empty import find_next_empty
 from tools.is_valid import is_valid
 
 def backtracking_iteratif_pile(grid, player: bool = False):
     size = grid.size
-    square_size = int(sqrt(size))
 
     # Initialiser la pile pour gérer les états
     stack = []
@@ -27,7 +25,7 @@ def backtracking_iteratif_pile(grid, player: bool = False):
         # Essayer les valeurs possibles pour la cellule actuelle
         while possible_values:
             attempt = possible_values.pop()
-            if is_valid(grid, attempt, row, col, square_size):
+            if is_valid(grid, attempt, row, col):
                 # Placer le numéro dans la cellule
                 grid.grid[row][col] = attempt
                 if player and (row, col) not in grid.player_cells:
