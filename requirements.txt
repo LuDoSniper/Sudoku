@@ -1,3 +1,5 @@
 colorama;
 keyboard;
+numpy;
+matplotlib;
 termios; sys_platform == "linux"

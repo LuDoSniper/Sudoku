@@ -10,10 +10,9 @@ def ite_heuristic_method(grid: Grid, player: bool = False):
     Génère un Sudoku valide en remplissant la grille avec des valeurs aléatoires.
     """
     size = grid.size  # Taille de la grille (ex: 4x4, 9x9)
-    square_size = int(sqrt(size))  # Taille du sous-carré (ex: 2x2, 3x3)
     stack = []
 
-    current_cell = find_next_empty_mrv(grid, size, square_size)
+    current_cell = find_next_empty_mrv(grid, size)
     if not current_cell:
         return True  # Grille déjà remplie
 
@@ -26,11 +25,11 @@ def ite_heuristic_method(grid: Grid, player: bool = False):
         while possible_values:
             attempt = possible_values.pop()  # Prend une valeur au hasard dans la liste mélangée
 
-            if is_valid(grid, attempt, row, col, square_size):
+            if is_valid(grid, attempt, row, col):
                 grid.grid[row][col] = attempt
                 if player and (row, col) not in grid.player_cells:
                     grid.player_cells.append((row, col))
-                next_cell = find_next_empty_mrv(grid, size, square_size)
+                next_cell = find_next_empty_mrv(grid, size)
 
                 if not next_cell:
                     return True  # Grille complétée
