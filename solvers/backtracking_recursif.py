@@ -20,7 +20,7 @@ def backtracking_recursif(grid, player: bool = False):
             grid.grid[row][col] = num
             if player and (row, col) not in grid.player_cells:
                 grid.player_cells.append((row, col))
-            if backtracking_recursif(grid, player):
+            if backtracking_recursif(grid, player=player):
                 return True
             
             grid.grid[row][col] = 0

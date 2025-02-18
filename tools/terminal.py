@@ -165,6 +165,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "grid"
                     backtracking_iteratif_pile(grid, player=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "indice_selection":
+                    current_menu = "grid"
+                    backtracking_iteratif_pile(grid, indice=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "2":
             match current_menu:
                 case "main":
@@ -191,6 +195,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "grid"
                     backtracking_recursif(grid, player=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "indice_selection":
+                    current_menu = "grid"
+                    backtracking_recursif(grid, indice=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "3":
             match current_menu:
                 case "main":
@@ -213,6 +221,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "grid"
                     ite_heuristic_method(grid, player=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "indice_selection":
+                    current_menu = "grid"
+                    ite_heuristic_method(grid, indice=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "4":
             match current_menu:
                 case "classique":
@@ -227,6 +239,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 case "solver_selection":
                     current_menu = "grid"
                     recu_heuristic_method(grid, player=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                case "indice_selection":
+                    current_menu = "grid"
+                    recu_heuristic_method(grid, indice=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "q":
             match current_menu:
@@ -297,7 +313,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 message("C'est là Tanguy pour le back (log)", "info")
         case 'i':
             if current_menu == "grid":
-                message("C'est là Tanguy pour l'indice", "info")
+                current_menu = "indice_selection"
+                display_menu(current_menu)
         case 'v':
             if current_menu == "grid":
                 if is_complete(grid):

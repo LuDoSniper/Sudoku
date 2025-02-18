@@ -20,6 +20,7 @@ class Grid:
 
         self.grid: list[list[int]] = grid
         self.player_cells: list[tuple] = []
+        self.indice_cells: list[tuple] = []
     
     def get_row(self, index: int) -> list:
         return list(self.grid[index])
@@ -108,6 +109,8 @@ class Grid:
                 if cell != 0:
                     if (row_index, col_index) in self.player_cells:
                         formatted_cell = (Fore.MAGENTA + str(cell) + Fore.RESET).center(max_width)
+                    elif (row_index, col_index) in self.indice_cells:
+                        formatted_cell = (Fore.LIGHTMAGENTA_EX + str(cell) + Fore.RESET).center(max_width)
                     else:
                         formatted_cell = Fore.RESET + str(cell).center(max_width)
                 else:
