@@ -250,7 +250,6 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
         print(f"Entrer un nombre                   : {Fore.GREEN}1-9{Fore.RESET}")
         print(f"Supprimer un nombre                : {Fore.GREEN}'backspace'{Fore.RESET}")
         print(f"Annuler                            : {Fore.GREEN}'b'{Fore.RESET}")
-        print(f"Indice                             : {Fore.GREEN}'i'{Fore.RESET}")
         print(f"Vérifier la grille                 : {Fore.GREEN}'v'{Fore.RESET}")
         print(f"Résoudre la grille                 : {Fore.GREEN}'r'{Fore.RESET}")
         print(f"Vérifier si il existe une solution : {Fore.GREEN}'s'{Fore.RESET}")
