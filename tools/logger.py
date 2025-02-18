@@ -18,7 +18,7 @@ def log(data: dict) -> None:
     """
     pass
 
-def unlog(data: dict) -> None:
+def unlog(index: int = -1) -> None:
     """
     Suppression d'un log
     """
