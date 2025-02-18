@@ -10,7 +10,7 @@ def clear_logs() -> None:
     """
     Nettoyage des logs
     """
-    pass 
+    pass
 
 def log(data: dict) -> None:
     """
