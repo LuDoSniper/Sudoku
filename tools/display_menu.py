@@ -244,6 +244,7 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
         print(f"Indice                         : {Fore.GREEN}'i'{Fore.RESET}")
         print(f"Vérifier la grille             : {Fore.GREEN}'v'{Fore.RESET}")
         print(f"Résoudre la grille             : {Fore.GREEN}'r'{Fore.RESET}")
+        print(f"Afficher le graphe             : {Fore.GREEN}'g'{Fore.RESET}")
         print(f"Quitter vers le menu principal : {Fore.GREEN}'q'{Fore.RESET}")
     else:
         print(f"Déplacements                       : {Fore.GREEN}flèches directionnelles{Fore.RESET}")
@@ -252,6 +253,7 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
         print(f"Annuler                            : {Fore.GREEN}'b'{Fore.RESET}")
         print(f"Vérifier la grille                 : {Fore.GREEN}'v'{Fore.RESET}")
         print(f"Résoudre la grille                 : {Fore.GREEN}'r'{Fore.RESET}")
+        print(f"Afficher le graphe                 : {Fore.GREEN}'g'{Fore.RESET}")
         print(f"Vérifier si il existe une solution : {Fore.GREEN}'s'{Fore.RESET}")
         print(f"Jouer sur la grille                : {Fore.GREEN}'j'{Fore.RESET}")
         print(f"Quitter vers le menu principal     : {Fore.GREEN}'q'{Fore.RESET}")

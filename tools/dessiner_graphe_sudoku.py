@@ -1,10 +1,22 @@
 import sys
 import os
+import threading
 import networkx as nx
 import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import networkx as nx
 import matplotlib.pyplot as plt
+from models.Grid import Grid
+from models.SudokuGraphe import SudokuGraphe
+from solvers.coloration_graphe import colorier_sudoku
+
+def display(grid: Grid) -> None:
+    """
+    Afficher le graphe de la grille de sudoku
+    """
+    sudoku_graph = SudokuGraphe(grid)
+    threading.Thread(target=colorier_sudoku, args=(sudoku_graph)).start()
+    print("Le truc devrait se lancer normalement")
 
 def dessiner_graphe_sudoku(sudoku_graphe):
     """Dessine le graphe du Sudoku avec un léger décalage pour éviter le chevauchement des arêtes."""

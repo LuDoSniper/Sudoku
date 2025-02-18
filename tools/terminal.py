@@ -13,6 +13,7 @@ from models.ChainedList import ChainedList
 from tools.generator import generate
 from tools.validator import verify, is_complete
 from tools.logger import log, unlog, get_logs, init as init_logs, chained_list_to_string as get_str_logs, get_tail
+from tools.dessiner_graphe_sudoku import display as display_graph
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
 from solvers.ite_heuristic import ite_heuristic_method
@@ -370,7 +371,11 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     result = recu_heuristic_method(grid)
                     grid.grid = grid_list
                     message(f"Votre grille {"n'a pas de solution" if not result else "a une solution"}", "success" if result else "error")
-
+        case 'g':
+            if current_menu == "grid":
+                if selected_difficulty is not None:
+                    display_graph(grid)
+                    message('Graphe affiché', "info")
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")
             message(get_str_logs(), "info")
