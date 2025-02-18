@@ -92,7 +92,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     if cursor_position:
                         if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and (cursor_position in grid.player_cells or selected_difficulty is None):
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
-                            log({"coords" : cursor_position, "nb" : event.name})
+                            log({"coords" : cursor_position, "event" : event.name})
                             try:
                                 grid.player_cells.remove(cursor_position)
                             except ValueError: # Lèvera une erreur si l'utilisateur est actuellement en importation
@@ -126,7 +126,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                         if cursor_position:
                             if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
                                 grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
-                                log({"coords" : cursor_position, "nb" : event.name})
+                                log({"coords" : cursor_position, "event" : event.name})
                                 imported = selected_difficulty is None
                                 if not imported:
                                     grid.player_cells.append(cursor_position)
@@ -312,25 +312,27 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
 
         case 'b':
             if current_menu == "grid":
-                tail = get_tail()
-                if tail is not None:
-                    data = tail.get_data()
+                result = unlog(data = False)
+
+                if result is not None:
+                    data = result.get_data()
                     coords = data.get("coords")
                     event = data.get("event")
 
                     if event == "backspace":
                         # Si le dernier log est un "backspace", on restaure la valeur précédente
-                        prev = tail.get_prev()
+                        prev = result.get_prev()
                         if prev is not None:
                             prev_data = prev.get_data()
                             prev_coords = prev_data.get("coords")
                             prev_event = prev_data.get("event")
                             grid.grid[prev_coords[0]][prev_coords[1]] = int(prev_event)
-                            unlog()  # Supprimer le dernier log
+                            grid.player_cells.append(prev_coords)
+                        
                     else:
                         # Sinon, on annule le dernier coup joué
                         grid.grid[coords[0]][coords[1]] = 0
-                        unlog()  # Supprimer le dernier log
+                        grid.player_cells.append(coords)
 
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
                     message("Dernier coup annulé", "info")

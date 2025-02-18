@@ -1,5 +1,6 @@
 from models.ChainedList import ChainedList
 from tools.display_menu import message
+
 logs: ChainedList|None = None
 
 
@@ -24,13 +25,14 @@ def log(data: dict) -> ChainedList:
     
     return logs
 
-def unlog(index: int = -1) -> None:
+def unlog(index: int = -1, data : bool = True) -> None:
     """
     Suppression d'un log
     """
     global logs
     if logs is not None and logs.get_size() > 0:
-        logs.pop(index)
+        logs, result = logs.pop(index = index, data = data)
+        return result
     else:
         message("Aucun coup à annuler", "warning")
 

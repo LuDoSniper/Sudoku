@@ -84,7 +84,7 @@ class ChainedList:
 
     def remove(self, index: int = -1) -> None:
         """
-        Tanguy met une description ici
+        Sert à supprimer la queue
         """
         current = self
         
