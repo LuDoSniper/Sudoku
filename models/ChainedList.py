@@ -64,3 +64,7 @@ class ChainedList:
         if data:
             return current.get_data()
         return current
+    
+    def __str__(self):
+        # Retourne la représentation en chaîne de caractères de la donnée du noeud actuel
+        return str(self.get_data())

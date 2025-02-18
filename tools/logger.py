@@ -1,31 +1,61 @@
-logs = None
+from models.ChainedList import ChainedList
+logs: ChainedList|None = None
+
 
 def init() -> None:
     """
-    Initialisation des logs
+    (Ré)Initialisation des logs
     """
-    pass
+    global logs
+    logs = None
+    
+    return logs
 
-def clear_logs() -> None:
-    """
-    Nettoyage des logs
-    """
-    pass 
-
-def log(data: dict) -> None:
+def log(data: dict) -> ChainedList:
     """
     Log d'une donnée
     """
-    pass
+    global logs
+    if logs is None:
+        logs = ChainedList(data)
+    else:
+        logs.append(data)
+    
+    return logs
 
 def unlog(index: int = -1) -> None:
     """
     Suppression d'un log
     """
-    pass
+    global logs
+    logs.pop(index)
+    
+    return logs
 
 def get_logs() -> list:
     """
     Récupération des logs
     """
-    return logs
+    global logs
+    
+    logs_list = []
+    current = logs
+    i = 1
+
+    while i <= logs.get_size():
+        logs_list.append(current.get_data())
+        current = current.get_next()
+
+    return logs_list
+
+def chained_list_to_string() -> str:
+    global logs
+    if logs is None:
+        return "Logs are empty"
+
+    elements = []
+    current = logs
+    while current is not None:
+        elements.append(str(current.get_data()))
+        current = current.get_next()
+    return " -> ".join(elements)
