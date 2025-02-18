@@ -1,34 +1,6 @@
 from math import sqrt
-
-def find_next_empty(grid, size):
-    # Trouver la première cellule vide (valeur 0) à résoudre
-    for row in range(size):
-        for col in range(size):
-            if grid.grid[row][col] == 0:
-                return row, col
-    return None
-#Meilleur cas : O(1)
-#Pire cas : O(n^2)
-
-def is_valid(grid, num, row, col, square_size):
-    # Vérifier si un numéro peut être placé dans une cellule
-    # Vérifier la ligne
-    if num in grid.get_row(row):
-        return False
-
-    # Vérifier la colonne
-    if num in grid.get_col(col):
-        return False
-
-    # Vérifier le carré
-    square_row = (row // square_size) * square_size
-    square_col = (col // square_size) * square_size
-    if num in grid.get_square(square_row, square_col):
-        return False
-
-    return True
-#Meilleur cas : O(1)
-#Pire cas : O(n)
+from tools.find_next_empty import find_next_empty
+from tools.is_valid import is_valid
 
 def backtracking_iteratif_pile(grid, player: bool = False):
     size = grid.size
@@ -80,5 +52,3 @@ def backtracking_iteratif_pile(grid, player: bool = False):
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
 
     return False  # Aucune solution trouvée
-#Meilleur cas : O(1)
-#Pire cas : O(n^4)

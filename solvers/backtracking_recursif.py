@@ -1,22 +1,6 @@
 from math import sqrt
-
-def find_next_empty(grid, size):
-    """ Trouve la prochaine cellule vide (0) dans la grille. """
-    for row in range(size):
-        for column in range(size):
-            if grid.grid[row][column] == 0:
-                return (row, column)
-    return None
-
-def is_valid(grid, num, row, col):
-    """ Vérifie si un numéro peut être placé dans la cellule donnée. """
-    if num in grid.get_row(row):
-        return False
-    if num in grid.get_col(col):
-        return False
-    if num in grid.get_square(row, col):
-        return False
-    return True
+from tools.find_next_empty import find_next_empty
+from tools.is_valid import is_valid
 
 def backtracking_recursif(grid, player: bool = False):
     """ Solveur de Sudoku utilisant le backtracking récursif. """

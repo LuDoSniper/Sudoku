@@ -30,7 +30,6 @@ class Graphe:
                 self.adjacence[sommet2].remove(sommet1)
 
     def __str__(self):
-        """Affiche la structure du graphe."""
         affichage = ""
         for sommet, voisins in self.adjacence.items():
             affichage += f"{sommet} -> {voisins} \n"
