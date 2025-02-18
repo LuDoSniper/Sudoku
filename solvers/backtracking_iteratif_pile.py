@@ -61,7 +61,7 @@ def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False)
         # Si aucune tentative ne fonctionne, réinitialiser la cellule
         if not possible_values:
             grid.grid[row][col] = 0
-            if player:
+            if player and (row, col) in grid.player_cells:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
             if indice and (row, col) in logs:
                 logs.pop(logs.index((row, col)))
