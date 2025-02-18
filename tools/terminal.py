@@ -277,6 +277,9 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     cursor_position = (0, 0)
                     display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
 
+        case 'b':
+            if current_menu == "grid":
+                message("C'est là Tanguy", "info")
         case 'v':
             if current_menu == "grid":
                 if is_complete(grid):
