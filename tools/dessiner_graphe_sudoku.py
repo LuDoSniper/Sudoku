@@ -42,17 +42,19 @@ def stop_thread() -> None:
         stop_event.set()
         thread.join()
 
-def display(grid: Grid) -> None:
+def display(grid: Grid|SudokuGraphe, graphe: bool = False) -> None:
+    """
+    Afficher le graphe de la grille de sudoku
+    le paramètre graphe est un booléen qui permet de savoir si le premier paramètre est un Grid ou un SudokuGraphe
+    """
+
     global thread
     global stop_event
 
-    """
-    Afficher le graphe de la grille de sudoku
-    """
     # sudoku_graph = grid.grid
     stop_event = threading.Event()
 
-    thread = threading.Thread(target=dessiner_graphe_sudoku, args=(SudokuGraphe(grid), stop_event))
+    thread = threading.Thread(target=dessiner_graphe_sudoku, args=(SudokuGraphe(grid) if not graphe else grid, stop_event))
     thread.start()
     print("Le truc devrait se lancer normalement")
 

@@ -21,6 +21,8 @@ def message(message: str, type: str) -> None:
             print(f"[{Fore.GREEN}SUCCESS{Fore.RESET}] : {message}")
         case "warning":
             print(f"[{Fore.YELLOW}WARNING{Fore.RESET}] : {message}")
+        case "debug":
+            print(f"[{Fore.LIGHTBLUE_EX}DEBUG{Fore.RESET}] : {message}")
         case _:
             raise ValueError("Type de message invalide")
 
@@ -109,7 +111,7 @@ def difficulty_selection_menu(n: int|None = None) -> None:
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'q. Retour'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
-def algo_selection(message: str) -> None:
+def algo_selection(message: str, graph: bool = True) -> None:
     width = 30
 
     print(get_quit_commands_message())
@@ -120,6 +122,8 @@ def algo_selection(message: str) -> None:
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'2. Backtracking récursif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'3. Heuristique itératif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'4. Heuristique récursif'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    if graph:
+        print(f"{Fore.BLUE}│ {Fore.GREEN}{'5. Coloration de graphe'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {' ' * width} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'q. Retour'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
@@ -276,9 +280,9 @@ def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_positi
         case "solver_selection":
             algo_selection("SOLVER")
         case "generator_selection":
-            algo_selection("GENERATOR")
+            algo_selection("GENERATOR", graph=False)
         case "indice_selection":
-            algo_selection("INDICE")
+            algo_selection("INDICE", graph=False)
         case "grid":
             grid_menu(grid, cursor_position, imported)
         case _:
