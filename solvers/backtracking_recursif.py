@@ -1,13 +1,19 @@
 import random
 from math import sqrt
 from tools.find_next_empty import find_next_empty
+from tools.find_next_empty import find_next_empty_mrv
 from tools.is_valid import is_valid
 
-def backtracking_recursif(grid, player: bool = False, indice: bool = False):
-    """ Solveur de Sudoku utilisant le backtracking récursif avec choix aléatoire des valeurs. """
+def backtracking_recursif(grid, player: bool = False, indice: bool = False, use_heuristic: bool = False) -> bool:
+    """
+    Solveur de Sudoku utilisant le backtracking récursif, renvois True si la grille est résolue, False sinon.
+    """
     size = grid.size
-    
-    cell = find_next_empty(grid, size)
+    if use_heuristic:
+        cell = find_next_empty_mrv(grid, size)
+    else:
+        cell = find_next_empty(grid, size)
+
     if cell is None:
         return True
     
@@ -22,7 +28,7 @@ def backtracking_recursif(grid, player: bool = False, indice: bool = False):
                 grid.player_cells.append((row, col))
             if indice and (row, col, num) not in grid.indice_cells:
                 grid.indice_cells_buffer.append((row, col, num))
-            if backtracking_recursif(grid, player=player, indice=indice):
+            if backtracking_recursif(grid, player=player, indice=indice, use_heuristic=use_heuristic):
                 return True
             
             grid.grid[row][col] = 0

@@ -1,8 +1,13 @@
 import random
+from models.Grid import Grid
 from tools.find_next_empty import find_next_empty
+from tools.find_next_empty import find_next_empty_mrv
 from tools.is_valid import is_valid
 
-def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False):
+def backtracking_iteratif_pile(grid : Grid, player: bool = False, indice: bool = False, use_heuristic: bool = False) -> bool: 
+    """
+    Solveur de Sudoku utilisant le backtracking itératif avec pile, renvois True si la grille est résolue, False sinon.
+    """
     size = grid.size
 
     # Initialiser les "logs" des actions effectuées pour l'indice
@@ -13,7 +18,11 @@ def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False)
     stack = []
 
     # Trouver la première cellule vide
-    current_cell = find_next_empty(grid, size)
+    if use_heuristic:
+        current_cell = find_next_empty_mrv(grid, size)
+    else:
+        current_cell = find_next_empty(grid, size)
+
     if not current_cell:
         return True  # La grille est déjà complète
 
@@ -38,7 +47,11 @@ def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False)
                     logs.append((row, col))
 
                 # Trouver la prochaine cellule vide
-                next_cell = find_next_empty(grid, size)
+                if use_heuristic:
+                    next_cell = find_next_empty_mrv(grid, size)
+                else:
+                    next_cell = find_next_empty(grid, size)
+                
 
                 if not next_cell:
                     # Ne laisser qu'une seule case remplie pour l'indice
