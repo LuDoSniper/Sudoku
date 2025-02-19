@@ -13,8 +13,6 @@ def init() -> None:
     """
     global logs
     logs = None
-    
-    return logs
 
 def log(data: dict) -> ChainedList:
     """

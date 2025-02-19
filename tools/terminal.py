@@ -89,7 +89,6 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     global selected_difficulty
     global grid
     global cursor_position
-    global logs
     global n
     global input_mode
 
@@ -129,6 +128,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                                 grid = Grid(selected_size)
                                 cursor_position = (0, 0)
                                 current_menu = "grid"
+                                init_logs()
                                 display_menu(current_menu, grid=grid, cursor_position=cursor_position, imported=True)
                         else:
                             selected_size = None
@@ -153,7 +153,6 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             case _:
                 match current_menu:
                     case "n_selection" | "n_import_selection":
-                        print(selected_size, n, input_mode)
                         if input_mode == "size":
                             selected_size = int(str(selected_size) + event.name) if selected_size else int(event.name)
                         elif input_mode == "n":
@@ -194,6 +193,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     cursor_position = (0, 0)
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty, alg=backtracking_iteratif_pile)
+                    init_logs()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "solver_selection":
                     current_menu = "grid"
@@ -225,6 +225,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     cursor_position = (0, 0)
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty, alg=backtracking_recursif)
+                    init_logs()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "solver_selection":
                     current_menu = "grid"
@@ -255,6 +256,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     cursor_position = (0, 0)
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty, alg=backtracking_iteratif_pile, use_heuristic=True)
+                    init_logs()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "solver_selection":
                     current_menu = "grid"
@@ -270,12 +272,14 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     shutdown()
                 case "classique":
                     current_menu = "n_selection"
+                    input_mode = "size"
                     display_menu(current_menu, selected_size)
                 case "generator_selection":
                     current_menu = "grid"
                     cursor_position = (0, 0)
                     grid = Grid(selected_size)
                     generate(grid, selected_difficulty, alg=backtracking_recursif, use_heuristic=True)
+                    init_logs()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "solver_selection":
                     current_menu = "grid"
@@ -416,7 +420,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             if current_menu == "grid" and selected_difficulty is None:
                 selected_difficulty = "easy"
                 display_menu("grid", grid=grid, cursor_position=cursor_position)
-                logs = init_logs()
+                init_logs()
         case 'r':
             if current_menu == "grid":
                 current_menu = "solver_selection"
