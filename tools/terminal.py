@@ -8,15 +8,20 @@ import keyboard
 import copy
 from tools.display_menu import display, message
 from math import sqrt
+
+# Custom
 from models.Grid import Grid
-from models.ChainedList import ChainedList
+
 from tools.generator import generate
 from tools.validator import verify, is_complete
 from tools.logger import log, unlog, init as init_logs, chained_list_to_string as get_str_logs, get_last_occurence
+from tools.dessiner_graphe_sudoku import display as display_graph, stop_thread
+
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
 from solvers.ite_heuristic import ite_heuristic_method
 from solvers.recu_heuristic import recu_heuristic_method
+from solvers.coloration_graphe import colorier_sudoku
 
 # Variables globales
 running = True
@@ -247,6 +252,14 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid.grid = grid_list
                     grid.activate_indice_buffer()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+        case '5':
+            match current_menu:
+                case "solver_selection":
+                    current_menu = "grid"
+                    stop_thread()
+                    display_graph(colorier_sudoku(grid), graphe=True)
+                    display_menu(current_menu, grid=grid, cursor_position=cursor_position)
+                    message('c\'est sensé marcher', 'debug')
         case "q":
             match current_menu:
                 case "rules" | "mode_selection":
@@ -265,8 +278,11 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     grid = None
                     cursor_position = None
                     display_menu(current_menu)
-                case "solver_selection":
-                    current_menu = "grid"
+                case "solver_selection" | "generator_selection" | "indice_selection":
+                    if cursor_position:
+                        current_menu = "grid"
+                    else:
+                        current_menu = "difficulty_selection"
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
             selected_difficulty = None
         
@@ -371,7 +387,11 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     result = recu_heuristic_method(grid)
                     grid.grid = grid_list
                     message(f"Votre grille {"n'a pas de solution" if not result else "a une solution"}", "success" if result else "error")
-
+        case 'g':
+            if current_menu == "grid":
+                if selected_difficulty is not None:
+                    display_graph(grid)
+                    message('Graphe affiché', "info")
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")
             message(get_str_logs(), "info")
@@ -390,10 +410,12 @@ def shutdown() -> None:
     Réinitialisation des paramètres avant la fermeture du programme
     """
     keyboard.unhook_all()
+    stop_thread()
     clear_buffer()
 
     clear()
-    message("Fermeture du programme", "info")
+    message("Fermeture du programme...", "info")
+    message("Cela peut prendre quelques secondes", "info")
     
     global running
     running = False

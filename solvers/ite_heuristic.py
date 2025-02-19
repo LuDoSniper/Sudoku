@@ -51,7 +51,7 @@ def ite_heuristic_method(grid: Grid, player: bool = False, indice: bool = False)
 
         if not possible_values:
             grid.grid[row][col] = 0  # Annule et revient en arrière si plus d'options
-            if player:
+            if player and (row, col) in grid.player_cells:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
             if indice and (row, col) in logs:
                 logs.pop(logs.index((row, col)))

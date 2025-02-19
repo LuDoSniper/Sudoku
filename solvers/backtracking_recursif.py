@@ -26,7 +26,7 @@ def backtracking_recursif(grid, player: bool = False, indice: bool = False):
                 return True
             
             grid.grid[row][col] = 0
-            if player:
+            if player and (row, col) in grid.player_cells:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))
             if indice and (row, col, num) in grid.indice_cells_buffer:
                 grid.indice_cells_buffer.pop(grid.indice_cells_buffer_tmp.index((row, col, num)))
