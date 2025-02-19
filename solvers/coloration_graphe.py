@@ -1,6 +1,8 @@
 import sys
 import os
+import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from tools.dessiner_graphe_sudoku import dessiner_graphe_sudoku
 
 def valide(sudoku_graphe, cellule, valeur):
     """
@@ -15,7 +17,7 @@ def valide(sudoku_graphe, cellule, valeur):
     return True  # Valeur valide
 
 
-def resolve(sudoku_graphe, liste_cellules, index):
+def resolve(sudoku_graphe, liste_cellules, index, ax):
     """
     Tente de résoudre le Sudoku en essayant différentes valeurs dans chaque cellule.
     """
@@ -28,7 +30,7 @@ def resolve(sudoku_graphe, liste_cellules, index):
 
     # Si la cellule a déjà une valeur, passer à la suivante
     if sudoku_graphe.valeurs[cellule] != 0:
-        return resolve(sudoku_graphe, liste_cellules, index + 1)
+        return resolve(sudoku_graphe, liste_cellules, index + 1, ax)
 
     # Essayer toutes les valeurs possibles (1 à taille)
     for valeur in range(1, sudoku_graphe.size + 1):
@@ -37,15 +39,21 @@ def resolve(sudoku_graphe, liste_cellules, index):
             sudoku_graphe.valeurs[cellule] = valeur
             sudoku_graphe.adjacence[cellule]['valeur'] = valeur
 
+            dessiner_graphe_sudoku(sudoku_graphe, ax)
+
             # Continuer avec la cellule suivante
-            if resolve(sudoku_graphe, liste_cellules, index + 1):
+            if resolve(sudoku_graphe, liste_cellules, index + 1, ax):
                 return True  # Succès, on arrête
 
             # Si la valeur ne fonctionne pas, annuler
             sudoku_graphe.valeurs[cellule] = 0
             sudoku_graphe.adjacence[cellule]['valeur'] = 0
 
+            dessiner_graphe_sudoku(sudoku_graphe, ax)
+
     # Si aucune valeur ne fonctionne, retour arrière
+    plt.ioff()  # Désactive le mode interactif après exécution
+    plt.show()  # Garde la dernière figure ouverte
     return False
 
 
@@ -55,8 +63,16 @@ def colorier_sudoku(sudoku_graphe):
     Modifie directement le SudokuGraphe donné en argument.
     """
     # Récupérer la liste des cellules du graphe
-    liste_cellules = list(sudoku_graphe.adjacence.keys())
+    plt.ion()  # Active le mode interactif
+    fig, ax = plt.subplots(figsize=(6, 6))
+
+    # Dessiner l'état initial du graphe
+    ax = dessiner_graphe_sudoku(sudoku_graphe, ax)
 
     # Lancer la résolution
-    resolve(sudoku_graphe, liste_cellules, 0)
+    liste_cellules = list(sudoku_graphe.adjacence.keys())
+    resolve(sudoku_graphe, liste_cellules, 0, ax)
+
+    plt.ioff()  # Désactive le mode interactif après la résolution
+    plt.show()  # Garde le dernier état affiché
 
