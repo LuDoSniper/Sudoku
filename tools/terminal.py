@@ -19,8 +19,6 @@ from tools.dessiner_graphe_sudoku import display as display_graph, stop_thread
 
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
-from solvers.ite_heuristic import ite_heuristic_method
-from solvers.recu_heuristic import recu_heuristic_method
 from solvers.coloration_graphe import colorier_sudoku
 
 # Variables globales
@@ -220,15 +218,15 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "grid"
                     cursor_position = (0, 0)
                     grid = Grid(selected_size)
-                    generate(grid, selected_difficulty, alg=ite_heuristic_method)
+                    generate(grid, selected_difficulty, alg=backtracking_iteratif_pile, use_heuristic=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "solver_selection":
                     current_menu = "grid"
-                    ite_heuristic_method(grid, player=True)
+                    backtracking_iteratif_pile(grid, player=True, use_heuristic=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "indice_selection":
                     current_menu = "grid"
-                    ite_heuristic_method(grid, indice=True)
+                    backtracking_iteratif_pile(grid, indice=True, use_heuristic=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "4":
             match current_menu:
@@ -239,16 +237,16 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     current_menu = "grid"
                     cursor_position = (0, 0)
                     grid = Grid(selected_size)
-                    generate(grid, selected_difficulty, alg=recu_heuristic_method)
+                    generate(grid, selected_difficulty, alg=backtracking_recursif, use_heuristic=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "solver_selection":
                     current_menu = "grid"
-                    recu_heuristic_method(grid, player=True)
+                    backtracking_recursif(grid, player=True, use_heuristic=True)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                 case "indice_selection":
                     current_menu = "grid"
                     grid_list = copy.deepcopy(grid.grid)
-                    recu_heuristic_method(grid, indice=True)
+                    backtracking_recursif(grid, indice=True, use_heuristic=True)
                     grid.grid = grid_list
                     grid.activate_indice_buffer()
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
@@ -385,7 +383,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             if current_menu == "grid":
                 if selected_difficulty is None:
                     grid_list = copy.deepcopy(grid.grid)
-                    result = recu_heuristic_method(grid)
+                    result = backtracking_recursif(grid, use_heuristic=True)
                     grid.grid = grid_list
                     message(f"Votre grille {"n'a pas de solution" if not result else "a une solution"}", "success" if result else "error")
         case 'g':
