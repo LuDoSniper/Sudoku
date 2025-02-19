@@ -219,19 +219,33 @@ def recolor_string(chars: list[Char]) -> str:
         string += char.__str__()
     return string
 
-def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> None:
+def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False, input: bool = False) -> None:
     lines = grid.__str__().split("\n")
-    index_y, index_x = cursor_pos[0] * 2 + 1, cursor_pos[1] * 4 + 1 + 1
+    add = 1 if grid.size > 9 else 0
+    index_y, index_x = cursor_pos[0] * 2 + 1, cursor_pos[1] * (4 + add) + 1 + 1
 
     selected_line = lines[index_y]
     
     decolored_line = decolor_string_v2(selected_line)
-    left, center, right = decolored_line[:index_x], decolored_line[index_x], decolored_line[index_x + 1:]
+    left = decolored_line[:index_x]
+    if grid.size > 9: 
+        centers = decolored_line[index_x: index_x + grid.get_max_width()]
+    else:
+        centers = decolored_line[index_x]
+    right = decolored_line[index_x + (grid.get_max_width() - 1 if grid.size > 9 else 0) + 1:]
     
     # center = f"{Back.CYAN}{center}{Back.RESET}"
-    center.back = Back.CYAN
+    if isinstance(centers, list):
+        for center in centers:
+            center.back = Back.CYAN
+    else:
+        centers.back = Back.CYAN
     right[0].back = Back.RESET
-    selected_line = left + [center] + right
+    if isinstance(centers, list):
+        center = centers
+    else:
+        center = [centers]
+    selected_line = left + center + right
     
     lines[index_y] = recolor_string(selected_line)
 
@@ -242,7 +256,10 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
     print()
     if not imported:
         print(f"Déplacements                   : {Fore.GREEN}flèches directionnelles{Fore.RESET}")
-        print(f"Entrer un nombre               : {Fore.GREEN}1-9{Fore.RESET}")
+        if not input:
+            print(f"Entrer un nombre               : {Fore.GREEN}1-9{Fore.RESET}")
+        else:
+            print(f"Entrer un nombre               : {Fore.GREEN}'e'{Fore.RESET}")
         print(f"Supprimer un nombre            : {Fore.GREEN}'backspace'{Fore.RESET}")
         print(f"Annuler                        : {Fore.GREEN}'b'{Fore.RESET}")
         print(f"Indice                         : {Fore.GREEN}'i'{Fore.RESET}")
@@ -252,7 +269,10 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
         print(f"Quitter vers le menu principal : {Fore.GREEN}'q'{Fore.RESET}")
     else:
         print(f"Déplacements                       : {Fore.GREEN}flèches directionnelles{Fore.RESET}")
-        print(f"Entrer un nombre                   : {Fore.GREEN}1-9{Fore.RESET}")
+        if not input:
+            print(f"Entrer un nombre                   : {Fore.GREEN}1-9{Fore.RESET}")
+        else:
+            print(f"Entrer un nombre                   : {Fore.GREEN}'e'{Fore.RESET}")
         print(f"Supprimer un nombre                : {Fore.GREEN}'backspace'{Fore.RESET}")
         print(f"Annuler                            : {Fore.GREEN}'b'{Fore.RESET}")
         print(f"Vérifier la grille                 : {Fore.GREEN}'v'{Fore.RESET}")
@@ -263,7 +283,7 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False) -> Non
         print(f"Quitter vers le menu principal     : {Fore.GREEN}'q'{Fore.RESET}")
     print()
 
-def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False) -> None:
+def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False, input: bool = False) -> None:
     match menu:
         case "main":
             main_menu()
@@ -284,6 +304,6 @@ def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_positi
         case "indice_selection":
             algo_selection("INDICE", graph=False)
         case "grid":
-            grid_menu(grid, cursor_position, imported)
+            grid_menu(grid, cursor_position, imported=imported, input=input)
         case _:
             message("Menu invalide", "error")

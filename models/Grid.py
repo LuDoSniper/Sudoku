@@ -115,9 +115,9 @@ class Grid:
             for col_index, cell in enumerate(row):
                 if cell != 0:
                     if (row_index, col_index) in self.player_cells:
-                        formatted_cell = (Fore.MAGENTA + str(cell) + Fore.RESET).center(max_width)
+                        formatted_cell = Fore.MAGENTA + str(cell).center(max_width) + Fore.RESET
                     elif (row_index, col_index) in self.indice_cells:
-                        formatted_cell = (Fore.LIGHTMAGENTA_EX + str(cell) + Fore.RESET).center(max_width)
+                        formatted_cell = Fore.LIGHTMAGENTA_EX + str(cell).center(max_width) + Fore.RESET
                     else:
                         formatted_cell = Fore.RESET + str(cell).center(max_width)
                 else:

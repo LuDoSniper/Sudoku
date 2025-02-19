@@ -30,6 +30,8 @@ selected_size = None
 selected_difficulty = None
 grid = None
 cursor_position = None
+n = None
+input_mode: str|None = None
 
 
 def clear() -> None:
@@ -73,7 +75,7 @@ def set_terminal_mode(raw: bool = True) -> None:
 
 def display_menu(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False) -> None:
     clear()
-    display(menu, n=n, grid=grid, cursor_position=cursor_position, imported=imported)
+    display(menu, n=n, grid=grid, cursor_position=cursor_position, imported=imported, input=grid is not None and grid.size > 9)
 
 def on_press(event: keyboard.KeyboardEvent) -> None:
     """
@@ -85,14 +87,19 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     global grid
     global cursor_position
     global logs
+    global n
+    global input_mode
 
     # Cas spécial séparé pour une meilleure lisibilité (custom input)
-    if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'backspace', 'enter'):
+    if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', 'backspace', 'enter'):
         match event.name:
             case "backspace":
-                if current_menu in ("n_selection", "n_import_selection") and selected_size:
-                    selected_size = int(str(selected_size)[:-1]) if len(str(selected_size)) > 1 else None
-                    display_menu(current_menu, selected_size)
+                if current_menu in ("n_selection", "n_import_selection") and (selected_size or n) and input_mode:
+                    if input_mode == "size":
+                        selected_size = int(str(selected_size)[:-1]) if len(str(selected_size)) > 1 else None
+                    elif input_mode == "n":
+                        n = int(str(n)[:-1]) if len(str(n)) > 1 else None
+                    display_menu(current_menu, selected_size if input_mode == "size" else n)
                 elif current_menu == "grid":
                     if cursor_position:
                         if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and (cursor_position in grid.player_cells or selected_difficulty is None):
@@ -108,37 +115,58 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     else:
                         message("Veuillez sélectionner une case", "error")
             case "enter":
-                if current_menu in ("n_selection", "n_import_selection") and selected_size:
-                    if selected_size > 0 and sqrt(selected_size) % 1 == 0:
-                        if current_menu == "n_selection":
-                            current_menu = "difficulty_selection"
+                if current_menu in ("n_selection", "n_import_selection"):
+                    if selected_size and input_mode == "size":
+                        if selected_size > 0 and sqrt(selected_size) % 1 == 0:
+                            if current_menu == "n_selection":
+                                current_menu = "difficulty_selection"
+                                display_menu(current_menu, selected_size)
+                            elif current_menu == "n_import_selection":
+                                message("Valeur valide", "success")
+                                grid = Grid(selected_size)
+                                cursor_position = (0, 0)
+                                current_menu = "grid"
+                                display_menu(current_menu, grid=grid, cursor_position=cursor_position, imported=True)
+                        else:
+                            selected_size = None
                             display_menu(current_menu, selected_size)
-                        elif current_menu == "n_import_selection":
-                            message("Valeur valide", "success")
-                            grid = Grid(selected_size)
-                            cursor_position = (0, 0)
+                            message("Veuillez entrer un entier valide", "error")
+                    elif n and input_mode == "n":
+                        if 0 < n <= grid.size:
                             current_menu = "grid"
-                            display_menu(current_menu, grid=grid, cursor_position=cursor_position, imported=True)
-                    else:
-                        selected_size = None
-                        display_menu(current_menu, selected_size)
-                        message("Veuillez entrer un entier valide", "error")
+                            if cursor_position:
+                                if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
+                                    grid.grid[cursor_position[0]][cursor_position[1]] = n
+                                    log({"coords" : cursor_position, "event" : str(n)})
+                                    imported = selected_difficulty is None
+                                    if not imported:
+                                        grid.player_cells.append(cursor_position)
+                                    display_menu(current_menu, grid=grid, cursor_position=cursor_position, imported=imported)
+                            else:
+                                message("Veuillez sélectionner une case", "error")
+                        else:
+                            message('Valeur invalide', 'error')
+                            message(f"Votre valeur doit être comprise entre 1 et {grid.size} incluts", 'info')
             case _:
                 match current_menu:
                     case "n_selection" | "n_import_selection":
-                        selected_size = int(str(selected_size) + event.name) if selected_size else int(event.name)
-                        display_menu(current_menu, selected_size)
+                        if input_mode == "size":
+                            selected_size = int(str(selected_size) + event.name) if selected_size else int(event.name)
+                        elif input_mode == "n":
+                            n = int(str(n) + event.name) if n else int(event.name)
+                        display_menu(current_menu, selected_size if input_mode == "size" else n)
                     case "grid":
-                        if cursor_position:
-                            if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
-                                grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
-                                log({"coords" : cursor_position, "event" : event.name})
-                                imported = selected_difficulty is None
-                                if not imported:
-                                    grid.player_cells.append(cursor_position)
-                                display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
-                        else:
-                            message("Veuillez sélectionner une case", "error")
+                        if grid.size <= 9:
+                            if cursor_position:
+                                if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
+                                    grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
+                                    log({"coords" : cursor_position, "event" : event.name})
+                                    imported = selected_difficulty is None
+                                    if not imported:
+                                        grid.player_cells.append(cursor_position)
+                                    display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
+                            else:
+                                message("Veuillez sélectionner une case", "error")
 
     match event.name:
         case "1":
@@ -259,7 +287,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     stop_thread()
                     display_graph(grid, solver=True, pause=0.01)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
-                    message('c\'est sensé marcher', 'debug')
+                    # message('c\'est sensé marcher', 'debug')
         case "q":
             match current_menu:
                 case "rules" | "mode_selection":
@@ -328,6 +356,12 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     cursor_position = (0, 0)
                     display_menu("grid", grid=grid, cursor_position=cursor_position, imported=imported)
 
+        case 'e':
+            if current_menu == "grid" and grid.size > 9:
+                current_menu = "n_selection"
+                n = None
+                input_mode = "n"
+                display_menu(current_menu)
         case 'b':
             if current_menu == "grid":
                 result = unlog(data = False)
@@ -354,8 +388,6 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
 
                     display_menu("grid", grid=grid, cursor_position=cursor_position)
                     message("Dernier coup annulé", "info")
-                else:
-                    message("Aucun coup à annuler", "warning")
         case 'i':
             if current_menu == "grid" and selected_difficulty is not None:
                 if not is_complete(grid):
@@ -393,10 +425,11 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 if selected_difficulty is not None:
                     stop_thread()
                     display_graph(grid, pause=0.01)
-                    message('Graphe affiché', "info")
+                    message('Graphe en cours d\'affichage...', "info")
         case _:
-            message(f"Ceci est un message de debug : {event.name}", "info")
-            message(get_str_logs(), "info")
+            # message(f"Ceci est un message de debug : {event.name}", "info")
+            # message(get_str_logs(), "info")
+            pass
 
 def mainloop() -> None:
     display_menu("main")
