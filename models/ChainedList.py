@@ -107,6 +107,23 @@ class ChainedList:
             prev = current.get_prev
             prev.set_next(next)
 
+    def get_tail(self) -> ChainedList | None:
+        #Renvoie le dernier élément de la liste chaînée.
+        current = self
+
+        while current.get_next() != None:
+            current = current.get_next()
+        
+        return current
+
+    def get_last_occurence(self, target_coords : list) -> ChainedList:
+        # Parcourt la liste chaînée en sens inverse et retourne l'avant-dernière occurence, autre que backspace aux coordonnées données
+        current = self.get_tail()
+
+        while current.get_data().get("coords") != target_coords:
+            current = current.get_prev()
+        
+        return current
     
     def __str__(self):
         # Retourne la représentation en chaîne de caractères de la donnée du noeud actuel
