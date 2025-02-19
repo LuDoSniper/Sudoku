@@ -46,12 +46,13 @@ class Grid:
         return square
 
     def get_max_width(self) -> int:
-        max_width = 0
-        for row in self.grid:
-            for cell in row:
-                cell_width = len(str(cell))
-                if cell_width > max_width:
-                    max_width = cell_width
+        # max_width = 0
+        # for row in self.grid:
+        #     for cell in row:
+        #         cell_width = len(str(cell))
+        #         if cell_width > max_width:
+        #             max_width = cell_width
+        max_width = len(str(self.size))
         return max_width
 
     def get_borders(self):

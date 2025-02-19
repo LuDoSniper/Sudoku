@@ -91,7 +91,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     global input_mode
 
     # Cas spécial séparé pour une meilleure lisibilité (custom input)
-    if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', 'backspace', 'enter'):
+    if event.name in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'backspace', 'enter'):
         match event.name:
             case "backspace":
                 if current_menu in ("n_selection", "n_import_selection") and (selected_size or n) and input_mode:
@@ -150,13 +150,14 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             case _:
                 match current_menu:
                     case "n_selection" | "n_import_selection":
+                        print(selected_size, n, input_mode)
                         if input_mode == "size":
                             selected_size = int(str(selected_size) + event.name) if selected_size else int(event.name)
                         elif input_mode == "n":
                             n = int(str(n) + event.name) if n else int(event.name)
                         display_menu(current_menu, selected_size if input_mode == "size" else n)
                     case "grid":
-                        if grid.size <= 9:
+                        if event.name != '0' and grid.size <= 9:
                             if cursor_position:
                                 if grid.grid[cursor_position[0]][cursor_position[1]] == 0:
                                     grid.grid[cursor_position[0]][cursor_position[1]] = int(event.name)
@@ -206,6 +207,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu(current_menu)
                 case "mode_selection":
                     current_menu = "n_import_selection"
+                    input_mode = "size"
                     display_menu(current_menu)
                 case "classique":
                     current_menu = "difficulty_selection"
