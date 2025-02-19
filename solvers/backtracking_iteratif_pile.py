@@ -9,7 +9,7 @@ from tools.is_valid import is_valid
 
 def backtracking_iteratif_pile(grid : Grid, player: bool = False, indice: bool = False, use_heuristic: bool = False, use_random: bool = True) -> bool: 
     """
-    Solveur de Sudoku utilisant le backtracking itératif avec pile, renvois True si la grille est résolue, False sinon.
+    Solveur de Sudoku utilisant le backtracking itératif avec pile, renvoie True si la grille est résolue, False sinon.
     """
     size = grid.size
 
@@ -40,7 +40,8 @@ def backtracking_iteratif_pile(grid : Grid, player: bool = False, indice: bool =
         (row, col), possible_values = stack.pop()
 
         # Essayer les valeurs possibles pour la cellule actuelle
-        while possible_values:
+        found_valid_value = False
+        while possible_values and not found_valid_value:
             attempt = possible_values.pop()
             if is_valid(grid, attempt, row, col):
                 # Placer le numéro dans la cellule
@@ -55,7 +56,6 @@ def backtracking_iteratif_pile(grid : Grid, player: bool = False, indice: bool =
                     next_cell = find_next_empty_mrv(grid, size)
                 else:
                     next_cell = find_next_empty(grid, size)
-                
 
                 if not next_cell:
                     # Ne laisser qu'une seule case remplie pour l'indice
@@ -73,11 +73,14 @@ def backtracking_iteratif_pile(grid : Grid, player: bool = False, indice: bool =
                 new_possible_values = list(range(1, size + 1))
                 if use_random:
                     random.shuffle(new_possible_values)
+                else:
+                    new_possible_values.append(new_possible_values.pop(0))
                 stack.append((next_cell, new_possible_values))
-                break
+
+                found_valid_value = True  # Marquer comme trouvé une valeur valide
 
         # Si aucune tentative ne fonctionne, réinitialiser la cellule
-        if not possible_values:
+        if not found_valid_value:
             grid.grid[row][col] = 0
             if player and (row, col) in grid.player_cells:
                 grid.player_cells.pop(grid.player_cells.index((row, col)))

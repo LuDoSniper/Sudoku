@@ -23,16 +23,16 @@ grid2 = copy.deepcopy(grid)
 grid3 = copy.deepcopy(grid)
 grid4 = copy.deepcopy(grid)
 
-recursif = timeit.timeit(lambda: backtracking_recursif(grid1, use_heuristic=False), number=1)
+recursif = timeit.timeit(lambda: backtracking_recursif(grid1, use_heuristic=False, use_random=False), number=1)
 print(f"Temps d'exécution pour le recursif: {recursif:.2f} secondes")
 
-recursif_heuristique = timeit.timeit(lambda: backtracking_recursif(grid2, use_heuristic=True), number=1)
+recursif_heuristique = timeit.timeit(lambda: backtracking_recursif(grid2, use_heuristic=True, use_random=False), number=1)
 print(f"Temps d'exécution pour le recursif heuristique: {recursif_heuristique:.2f} secondes")
 
-iteratif = timeit.timeit(lambda: backtracking_iteratif_pile(grid3, use_heuristic=False, use_random=True), number=1)
+iteratif = timeit.timeit(lambda: backtracking_iteratif_pile(grid3, use_heuristic=False, use_random=False), number=1)
 print(f"Temps d'exécution pour l'iteratif: {iteratif:.2f} secondes")
 
-iteratif_heurisique = timeit.timeit(lambda: backtracking_iteratif_pile(grid4, use_heuristic=True, use_random=True), number=1)
+iteratif_heurisique = timeit.timeit(lambda: backtracking_iteratif_pile(grid4, use_heuristic=True, use_random=False), number=1)
 print(f"Temps d'exécution pour l'iteratif heuristique: {iteratif_heurisique:.2f} secondes")
 
 # colorier_sudoku(grid)
