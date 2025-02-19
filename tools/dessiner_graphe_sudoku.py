@@ -58,10 +58,13 @@ def display(grid: Grid|SudokuGraphe, graphe: bool = False) -> None:
     thread = threading.Thread(target=dessiner_graphe_sudoku, args=(SudokuGraphe(grid) if not graphe else grid, stop_event))
     thread.start()
 
-def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event, ax, fig):
-    """Dessine le graphe du Sudoku avec un léger décalage pour éviter le chevauchement des arêtes."""
+
+def dessiner_graphe_sudoku(sudoku_graphe, stop_event=threading.Event(), ax=None, fig=None):
+    """Dessine le graphe du Sudoku et met à jour l'affichage si `ax` et `fig` sont fournis."""
     while not stop_event.is_set():
-        ax.clear()
+        if ax is not None:
+            ax.clear()
+
         G = nx.Graph()
 
         # Ajouter les sommets et arêtes
@@ -70,41 +73,36 @@ def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event, ax, fig):
             for voisin in voisins['liens']:
                 G.add_edge(sommet, voisin)
 
-        # Définition des positions avec un léger décalage
+        # Définition des positions
         size = sudoku_graphe.size
-        spacing = 0.3  # Ajuste cet écart pour mieux espacer les lignes
+        spacing = 0.3  
 
-        pos = {}
-        for i in range(size):
-            for j in range(size):
-                x_offset = (i % 2) * spacing  # Décalage horizontal pour certaines lignes
-                y_offset = (j % 2) * spacing  # Décalage vertical pour certaines colonnes
-                pos[(i, j)] = (j + x_offset, -i + y_offset)
+        pos = {(i, j): (j + (i % 2) * spacing, -i + (j % 2) * spacing) for i in range(size) for j in range(size)}
 
         # Définition des couleurs
-        couleurs = {
-            1: "green", 2: "blue", 3: "red", 4: "purple", 5: "orange",
-            6: "pink", 7: "yellow", 8: "cyan", 9: "brown"
-        }
+        couleurs = {1: "green", 2: "blue", 3: "red", 4: "purple", 5: "orange",
+                    6: "pink", 7: "yellow", 8: "cyan", 9: "brown"}
 
-        # Attribution des couleurs aux nœuds
         node_colors = [couleurs.get(sudoku_graphe.valeurs.get(n, 0), "gray") for n in G.nodes()]
 
-        # Dessiner le graphe
-        nx.draw(G, pos, ax=ax, with_labels=False, node_color=node_colors, edge_color='gray', node_size=700)
+        if ax is not None and fig is not None:
+            # Mode interactif : mise à jour directe du graphe
+            nx.draw(G, pos, ax=ax, with_labels=False, node_color=node_colors, edge_color='gray', node_size=700)
+            labels = {n: sudoku_graphe.valeurs.get(n, "?") for n in G.nodes()}
+            nx.draw_networkx_labels(G, pos, labels=labels, ax=ax, font_size=12, font_color="white")
 
-        def on_close(event):
-            if event is not None:
-                stop_event.set()
-                plt.close(fig)
+            fig.canvas.draw()  # Force l'affichage
+            fig.canvas.flush_events()  # Rafraîchit les événements
+            plt.pause(0.5)  # Pause pour voir l'évolution
 
-        fig.canvas.mpl_connect('close_event', on_close)
+            return ax
 
-        # Ajouter les valeurs des nœuds comme labels
-        labels = {n: sudoku_graphe.valeurs.get(n, "?") for n in G.nodes()}
-        nx.draw_networkx_labels(G, pos, labels=labels, ax=ax, font_size=12, font_color="white")
+        else:
+            # Mode statique
+            fig, ax = plt.subplots(figsize=(6, 6))
+            nx.draw(G, pos, ax=ax, with_labels=False, node_color=node_colors, edge_color='gray', node_size=700)
+            labels = {n: sudoku_graphe.valeurs.get(n, "?") for n in G.nodes()}
+            nx.draw_networkx_labels(G, pos, labels=labels, ax=ax, font_size=12, font_color="white")
 
-        # Rafraîchir l'affichage
-        plt.pause(0.9)  # Pause pour voir l'évolution
+            plt.show()
 
-        return ax  # Retourne ax pour éviter qu'il devienne `None`
