@@ -8,7 +8,7 @@ import threading
 from models.Grid import Grid
 from models.SudokuGraphe import SudokuGraphe
 
-def valide(sudoku_graphe, cellule, valeur):
+def valide(sudoku_graphe : SudokuGraphe, cellule : int, valeur : int) -> bool:
     """
     Vérifie si la valeur peut être placée dans la cellule sans violer les règles du Sudoku.
     """
@@ -21,7 +21,7 @@ def valide(sudoku_graphe, cellule, valeur):
     return True  # Valeur valide
 
 
-def resolve(sudoku_graphe, liste_cellules, index, ax, fig, stop_event: threading.Event = threading.Event(), pause: float = 0.5):
+def resolve(sudoku_graphe : SudokuGraphe, liste_cellules : list, index : int, ax : plt.Axes, fig : plt.Figure, stop_event: threading.Event = threading.Event(), pause: float = 0.5) -> bool:
     """
     Tente de résoudre le Sudoku en essayant différentes valeurs dans chaque cellule.
     """

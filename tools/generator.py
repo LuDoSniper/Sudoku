@@ -64,9 +64,10 @@ def calibrate(grid: Grid, difficulty: str) -> None:
             removed += 1
 
 
-def generate(grid: Grid, difficulty: str, alg: callable = None) -> None:
+def generate(grid: Grid, difficulty: str, alg: callable = None, **kwargs) -> None:
     if alg is None:
         generate_full(grid)
     else:
-        alg(grid)
+        alg(grid, **kwargs)
+
     calibrate(grid, difficulty)

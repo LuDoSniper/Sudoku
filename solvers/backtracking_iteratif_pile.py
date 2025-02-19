@@ -1,8 +1,16 @@
 import random
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from models.Grid import Grid
 from tools.find_next_empty import find_next_empty
+from tools.find_next_empty import find_next_empty_mrv
 from tools.is_valid import is_valid
 
-def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False):
+def backtracking_iteratif_pile(grid : Grid, player: bool = False, indice: bool = False, use_heuristic: bool = False, use_random: bool = True) -> bool: 
+    """
+    Solveur de Sudoku utilisant le backtracking itératif avec pile, renvois True si la grille est résolue, False sinon.
+    """
     size = grid.size
 
     # Initialiser les "logs" des actions effectuées pour l'indice
@@ -13,13 +21,18 @@ def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False)
     stack = []
 
     # Trouver la première cellule vide
-    current_cell = find_next_empty(grid, size)
+    if use_heuristic:
+        current_cell = find_next_empty_mrv(grid, size)
+    else:
+        current_cell = find_next_empty(grid, size)
+
     if not current_cell:
         return True  # La grille est déjà complète
 
     # Ajouter le premier état à la pile
     possible_values = list(range(1, size + 1))
-    random.shuffle(possible_values)
+    if use_random:
+        random.shuffle(possible_values)
     stack.append((current_cell, possible_values))  # (position, valeurs possibles mélangées)
 
     while stack:
@@ -38,7 +51,11 @@ def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False)
                     logs.append((row, col))
 
                 # Trouver la prochaine cellule vide
-                next_cell = find_next_empty(grid, size)
+                if use_heuristic:
+                    next_cell = find_next_empty_mrv(grid, size)
+                else:
+                    next_cell = find_next_empty(grid, size)
+                
 
                 if not next_cell:
                     # Ne laisser qu'une seule case remplie pour l'indice
@@ -54,7 +71,8 @@ def backtracking_iteratif_pile(grid, player: bool = False, indice: bool = False)
                 # Ajouter l'état suivant à la pile
                 stack.append(((row, col), possible_values))  # Sauvegarde de l'état actuel
                 new_possible_values = list(range(1, size + 1))
-                random.shuffle(new_possible_values)
+                if use_random:
+                    random.shuffle(new_possible_values)
                 stack.append((next_cell, new_possible_values))
                 break
 
