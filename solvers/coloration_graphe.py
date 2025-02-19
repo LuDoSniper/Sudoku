@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tools.dessiner_graphe_sudoku import dessiner_graphe_sudoku
+import threading
 
 def valide(sudoku_graphe, cellule, valeur):
     """
@@ -39,7 +40,7 @@ def resolve(sudoku_graphe, liste_cellules, index, ax):
             sudoku_graphe.valeurs[cellule] = valeur
             sudoku_graphe.adjacence[cellule]['valeur'] = valeur
 
-            dessiner_graphe_sudoku(sudoku_graphe, ax)
+            dessiner_graphe_sudoku(sudoku_graphe, threading.Event(), ax)
 
             # Continuer avec la cellule suivante
             if resolve(sudoku_graphe, liste_cellules, index + 1, ax):
@@ -49,7 +50,7 @@ def resolve(sudoku_graphe, liste_cellules, index, ax):
             sudoku_graphe.valeurs[cellule] = 0
             sudoku_graphe.adjacence[cellule]['valeur'] = 0
 
-            dessiner_graphe_sudoku(sudoku_graphe, ax)
+            dessiner_graphe_sudoku(sudoku_graphe, threading.Event(), ax)
 
     # Si aucune valeur ne fonctionne, retour arrière
     plt.ioff()  # Désactive le mode interactif après exécution
@@ -67,7 +68,7 @@ def colorier_sudoku(sudoku_graphe):
     fig, ax = plt.subplots(figsize=(6, 6))
 
     # Dessiner l'état initial du graphe
-    ax = dessiner_graphe_sudoku(sudoku_graphe, ax)
+    ax = dessiner_graphe_sudoku(sudoku_graphe, threading.Event() ,ax)
 
     # Lancer la résolution
     liste_cellules = list(sudoku_graphe.adjacence.keys())
