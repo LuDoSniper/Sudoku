@@ -237,7 +237,10 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
         case "3":
             match current_menu:
                 case "main":
-                    shutdown()
+                    current_menu = "algo_times"
+                    message("Sample : 10", "info")
+                    message("Calcul des moyennes de temps d'execution...", "info")
+                    display_menu(current_menu)
                 case "classique":
                     current_menu = "difficulty_selection"
                     selected_size = 16
@@ -262,6 +265,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
         case "4":
             match current_menu:
+                case "main":
+                    shutdown()
                 case "classique":
                     current_menu = "n_selection"
                     display_menu(current_menu, selected_size)
@@ -292,7 +297,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     # message('c\'est sensé marcher', 'debug')
         case "q":
             match current_menu:
-                case "rules" | "mode_selection":
+                case "rules" | "mode_selection" | "algo_times":
                     current_menu = "main"
                     display_menu(current_menu)
                 case "classique":

@@ -30,7 +30,7 @@ calibrate(grid, "easy")  # Calibrage à des fins visuelles
 # heuristique_recu = timeit.timeit(lambda: recu_heuristic_method(grid), number=1)
 # print(f"Temps d'exécution pour le heuristique: {heuristique_recu:.2f} secondes")
 
-colorier_sudoku(grid)
+# colorier_sudoku(grid)
 
 # dessiner_graphe_sudoku(SudokuGraphe(grid))
 
