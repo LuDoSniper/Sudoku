@@ -236,8 +236,6 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             match current_menu:
                 case "main":
                     current_menu = "algo_times"
-                    message("Sample : 10", "info")
-                    message("Calcul des moyennes de temps d'execution...", "info")
                     display_menu(current_menu)
                 case "classique":
                     current_menu = "difficulty_selection"

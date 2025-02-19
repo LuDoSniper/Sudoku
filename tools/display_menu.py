@@ -7,8 +7,8 @@ from math import sqrt
 from tools.timer import time_all
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
-from solvers.ite_heuristic import ite_heuristic_method
-from solvers.recu_heuristic import recu_heuristic_method
+# from solvers.ite_heuristic import ite_heuristic_method
+# from solvers.recu_heuristic import recu_heuristic_method
 
 def get_quit_commands_message() -> str:
     return f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}"
@@ -137,38 +137,31 @@ def algo_selection(message: str, graph: bool = True) -> None:
 def algo_times() -> None:
     width = 43
 
-    times_4 = time_all([backtracking_iteratif_pile,
-                      backtracking_recursif,
-                      ite_heuristic_method,
-                      recu_heuristic_method], Grid(4))
-    times_9 = time_all([backtracking_iteratif_pile,
-                      backtracking_recursif,
-                      ite_heuristic_method,
-                      recu_heuristic_method], Grid(9))
-    times_16 = time_all([backtracking_iteratif_pile,
-                      backtracking_recursif,
-                      ite_heuristic_method,
-                      recu_heuristic_method], Grid(16))
+    message("Sample : 10", "info")
+    message("Calcul des moyennes de temps d'execution...", "info")
+    times = time_all()
+    from tools.terminal import clear
+    clear()
 
     print(get_quit_commands_message())
     print(f"{Fore.BLUE}┌{'─' * (width + 2)}┐{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{(f"SUDOKU - CALCUL").center(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}├{'─' * (width + 2)}┤{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{(f"4x4").center(width, '─')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking itératif : {times_4['backtracking_iteratif_pile']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking récursif : {times_4['backtracking_recursif']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique itératif  : {times_4['ite_heuristic_method']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique récursif  : {times_4['recu_heuristic_method']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking itératif : {times[0][0]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking récursif : {times[0][1]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique itératif  : {times[0][2]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique récursif  : {times[0][3]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{(f"9x9").center(width, '─')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking itératif : {times_9['backtracking_iteratif_pile']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking récursif : {times_9['backtracking_recursif']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique itératif  : {times_9['ite_heuristic_method']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique récursif  : {times_9['recu_heuristic_method']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking itératif : {times[1][0]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking récursif : {times[1][1]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique itératif  : {times[1][2]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique récursif  : {times[1][3]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.CYAN}{(f"16x16").center(width, '─')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking itératif : {times_16['backtracking_iteratif_pile']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking récursif : {times_16['backtracking_recursif']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique itératif  : {times_16['ite_heuristic_method']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
-    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique récursif  : {times_16['recu_heuristic_method']:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking itératif : {times[2][0]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Backtracking récursif : {times[2][1]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique itératif  : {times[2][2]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
+    print(f"{Fore.BLUE}│ {Fore.GREEN}{f'Heuristique récursif  : {times[2][3]:.8f} secondes'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {' ' * width} │{Fore.RESET}")
     print(f"{Fore.BLUE}│ {Fore.GREEN}{'q. Retour'.ljust(width, ' ')}{Fore.BLUE} │{Fore.RESET}")
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
