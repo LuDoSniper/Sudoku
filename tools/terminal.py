@@ -13,7 +13,7 @@ from models.ChainedList import ChainedList
 from tools.generator import generate
 from tools.validator import verify, is_complete
 from tools.logger import log, unlog, get_logs, init as init_logs, chained_list_to_string as get_str_logs, get_tail
-from tools.dessiner_graphe_sudoku import display as display_graph
+from tools.dessiner_graphe_sudoku import display as display_graph, stop_thread
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
 from solvers.ite_heuristic import ite_heuristic_method
@@ -394,10 +394,12 @@ def shutdown() -> None:
     Réinitialisation des paramètres avant la fermeture du programme
     """
     keyboard.unhook_all()
+    stop_thread()
     clear_buffer()
 
     clear()
-    message("Fermeture du programme", "info")
+    message("Fermeture du programme...", "info")
+    message("Cela peut prendre quelques secondes", "info")
     
     global running
     running = False
