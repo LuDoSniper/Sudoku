@@ -1,5 +1,6 @@
 # Imports
 import timeit
+import copy
 
 # Custom imports
 # models
@@ -18,7 +19,10 @@ def time(message_str: str, func: callable, *args: any, **kwargs: any) -> float:
 
     message(message_str, 'info')
     sum = 0
-    for _ in range(5):
+    size = args[0].size
+    for _ in range(100 if size < 16 else 10):
+        grid = copy.deepcopy(args[0])
+        args = (grid, *args[1:])
         sum += timeit.timeit(lambda: func(*args, **kwargs), number=1)
     return sum / 5
 
@@ -49,11 +53,11 @@ def time_all():
 
     # Setup
     grid_4 = Grid(4)
-    generate(grid_4, "normal", backtracking_iteratif_pile, use_heuristic=False, use_random=True) # A passer en False
+    generate(grid_4, "easy") # A passer en False
     grid_9 = Grid(9)
-    generate(grid_4, "normal", backtracking_iteratif_pile, use_heuristic=False, use_random=True) # A passer en False
+    generate(grid_4, "easy") # A passer en False
     grid_16 = Grid(16)
-    generate(grid_4, "normal", backtracking_iteratif_pile, use_heuristic=False, use_random=True) # A passer en False
+    generate(grid_4, "easy") # A passer en False
 
     # Benchmark
     solv.append([time("Calcul de backtracking_iteratif pour 4x4...", backtracking_iteratif_pile, grid_4, use_heuristic=False, use_random=True), # A passer en False

@@ -170,7 +170,7 @@ def algo_times() -> None:
     """
     width = 43
 
-    message("Sample : 5", "info")
+    message("Samples : 100 pour size < 16 ; Samples : 10 pour size >= 16", "info")
     message("Calcul des moyennes de temps d'execution...", "info")
     times = time_all()
     from tools.terminal import clear

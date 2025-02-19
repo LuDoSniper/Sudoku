@@ -1,8 +1,13 @@
+# Import
 import random
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # Ajouter le dossier parent au PATH pour pouvoir importer les modules
+
+# Custom import
+# models
 from models.Grid import Grid
+# tools
 from tools.find_next_empty import find_next_empty
 from tools.find_next_empty import find_next_empty_mrv
 from tools.is_valid import is_valid
@@ -11,6 +16,7 @@ def backtracking_iteratif_pile(grid : Grid, player: bool = False, indice: bool =
     """
     Solveur de Sudoku utilisant le backtracking itératif avec pile, renvois True si la grille est résolue, False sinon.
     """
+
     size = grid.size
 
     # Initialiser les "logs" des actions effectuées pour l'indice
