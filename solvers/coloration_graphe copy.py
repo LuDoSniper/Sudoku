@@ -21,7 +21,7 @@ def valide(sudoku_graphe, cellule, valeur):
     return True  # Valeur valide
 
 
-def resolve(sudoku_graphe, liste_cellules, index, ax, fig, stop_event: threading.Event = threading.Event(), pause: float = 0.5):
+def resolve(sudoku_graphe, liste_cellules, index, ax, fig):
     """
     Tente de résoudre le Sudoku en essayant différentes valeurs dans chaque cellule.
     """
@@ -34,7 +34,7 @@ def resolve(sudoku_graphe, liste_cellules, index, ax, fig, stop_event: threading
 
     # Si la cellule a déjà une valeur, passer à la suivante
     if sudoku_graphe.valeurs[cellule] != 0:
-        return resolve(sudoku_graphe, liste_cellules, index + 1, ax, fig, stop_event=stop_event, pause=pause)
+        return resolve(sudoku_graphe, liste_cellules, index + 1, ax, fig)
 
     # Essayer toutes les valeurs possibles (1 à taille)
     for valeur in range(1, sudoku_graphe.size + 1):
@@ -43,17 +43,17 @@ def resolve(sudoku_graphe, liste_cellules, index, ax, fig, stop_event: threading
             sudoku_graphe.valeurs[cellule] = valeur
             sudoku_graphe.adjacence[cellule]['valeur'] = valeur
 
-            dessiner_graphe_sudoku(sudoku_graphe, stop_event=stop_event, ax=ax, fig=fig, pause=pause)
+            dessiner_graphe_sudoku(sudoku_graphe, threading.Event(), ax, fig)
 
             # Continuer avec la cellule suivante
-            if resolve(sudoku_graphe, liste_cellules, index + 1, ax, fig, stop_event=stop_event, pause=pause):
+            if resolve(sudoku_graphe, liste_cellules, index + 1, ax, fig):
                 return True  # Succès, on arrête
 
             # Si la valeur ne fonctionne pas, annuler
             sudoku_graphe.valeurs[cellule] = 0
             sudoku_graphe.adjacence[cellule]['valeur'] = 0
 
-            dessiner_graphe_sudoku(sudoku_graphe, stop_event=stop_event, ax=ax, fig=fig, pause=pause)
+            dessiner_graphe_sudoku(sudoku_graphe, threading.Event(), ax, fig)
 
     # Si aucune valeur ne fonctionne, retour arrière
     plt.ioff()  # Désactive le mode interactif après exécution
@@ -61,7 +61,7 @@ def resolve(sudoku_graphe, liste_cellules, index, ax, fig, stop_event: threading
     return False
 
 
-def colorier_sudoku(grid: Grid, stop_event: threading.Event = threading.Event(), pause: float = 0.5) -> SudokuGraphe:
+def colorier_sudoku(grid: Grid) -> SudokuGraphe:
     """
     Remplit le Sudoku en utilisant un algorithme de coloration de graphe.
     Modifie directement le SudokuGraphe donné en argument.
@@ -74,11 +74,11 @@ def colorier_sudoku(grid: Grid, stop_event: threading.Event = threading.Event(),
     fig, ax = plt.subplots(figsize=(6, 6))
 
     # Dessiner l'état initial du graphe
-    ax = dessiner_graphe_sudoku(sudoku_graphe, stop_event=stop_event, pause=pause, ax=ax, fig=fig)
+    ax = dessiner_graphe_sudoku(sudoku_graphe, threading.Event() ,ax, fig)
 
     # Lancer la résolution
     liste_cellules = list(sudoku_graphe.adjacence.keys())
-    resolve(sudoku_graphe, liste_cellules, 0, ax, fig, stop_event=stop_event, pause=pause)
+    resolve(sudoku_graphe, liste_cellules, 0, ax, fig)
 
     plt.ioff()  # Désactive le mode interactif après la résolution
     plt.show()  # Garde le dernier état affiché

@@ -257,7 +257,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 case "solver_selection":
                     current_menu = "grid"
                     stop_thread()
-                    display_graph(colorier_sudoku(grid), graphe=True)
+                    display_graph(grid, solver=True, pause=0.01)
                     display_menu(current_menu, grid=grid, cursor_position=cursor_position)
                     message('c\'est sensé marcher', 'debug')
         case "q":
@@ -277,6 +277,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     selected_size = None
                     grid = None
                     cursor_position = None
+                    stop_thread()
                     display_menu(current_menu)
                 case "solver_selection" | "generator_selection" | "indice_selection":
                     if cursor_position:
@@ -390,7 +391,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
         case 'g':
             if current_menu == "grid":
                 if selected_difficulty is not None:
-                    display_graph(grid)
+                    stop_thread()
+                    display_graph(grid, pause=0.01)
                     message('Graphe affiché', "info")
         case _:
             message(f"Ceci est un message de debug : {event.name}", "info")

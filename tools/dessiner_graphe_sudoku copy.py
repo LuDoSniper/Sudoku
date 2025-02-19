@@ -33,22 +33,19 @@ from models.SudokuGraphe import SudokuGraphe
 
 thread: threading.Thread = None
 stop_event: threading.Event = None
-# current_figure: plt.Figure = None
 
 def stop_thread() -> None:
     global thread
     global stop_event
-    global current_figure
 
     if thread is not None and stop_event is not None:
-        plt.close(current_figure)
-        current_figure = None
         stop_event.set()
         thread.join()
 
-def display(grid: Grid, solver: bool = False, pause: float = 0.5) -> None:
+def display(grid: Grid|SudokuGraphe, graphe: bool = False) -> None:
     """
     Afficher le graphe de la grille de sudoku
+    le paramètre graphe est un booléen qui permet de savoir si le premier paramètre est un Grid ou un SudokuGraphe
     """
 
     from solvers.coloration_graphe import colorier_sudoku  # Import ici pour éviter la boucle
@@ -58,17 +55,13 @@ def display(grid: Grid, solver: bool = False, pause: float = 0.5) -> None:
 
     stop_event = threading.Event()
 
-    thread = threading.Thread(target=dessiner_graphe_sudoku if not solver else colorier_sudoku, args=(SudokuGraphe(grid) if not solver else grid, stop_event, pause))
-    # thread = threading.Thread(target=colorier_sudoku, args=(grid,))
+    thread = threading.Thread(target=dessiner_graphe_sudoku, args=(SudokuGraphe(grid) if not graphe else grid, stop_event))
     thread.start()
 
 
-def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event = threading.Event(), pause: float = 0.5, ax: plt.Axes|None = None, fig: plt.Figure|None = None) -> plt.Axes:
+def dessiner_graphe_sudoku(sudoku_graphe, stop_event=threading.Event(), ax=None, fig=None):
     """Dessine le graphe du Sudoku et met à jour l'affichage si `ax` et `fig` sont fournis."""
-    global current_figure
-    current_figure = fig
-
-    while stop_event is None or  not stop_event.is_set():
+    while not stop_event.is_set():
         if ax is not None:
             ax.clear()
 
@@ -100,7 +93,7 @@ def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event = threadin
 
             fig.canvas.draw()  # Force l'affichage
             fig.canvas.flush_events()  # Rafraîchit les événements
-            plt.pause(pause)  # Pause pour voir l'évolution
+            plt.pause(0.5)  # Pause pour voir l'évolution
 
             return ax
 
@@ -110,9 +103,6 @@ def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event = threadin
             nx.draw(G, pos, ax=ax, with_labels=False, node_color=node_colors, edge_color='gray', node_size=700)
             labels = {n: sudoku_graphe.valeurs.get(n, "?") for n in G.nodes()}
             nx.draw_networkx_labels(G, pos, labels=labels, ax=ax, font_size=12, font_color="white")
-            current_figure = fig
 
             plt.show()
-        
-        if stop_event is not None:
-            fig.canvas.mpl_connect('close_event', lambda event: stop_event.set() if event is not None else None)
+
