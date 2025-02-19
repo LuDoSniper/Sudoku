@@ -1,0 +1,44 @@
+# Imports
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # Ajouter le dossier parent au PATH pour importer les modules custom
+from math import sqrt
+
+# Custom imports
+# models
+from models.Grid import Grid
+
+def is_complete(grid: Grid) -> bool:
+    """
+    Vérifie si une grille est complète.
+    Une grille est complète si elle ne contient aucun zéro.
+    """
+    return all(cell != 0 for row in grid.grid for cell in row)
+
+def verify(grid: Grid) -> bool:
+    """
+    Vérifie si une grille est valide en respectant les règles du Sudoku.
+    Une grille est valide si chaque ligne, chaque colonne et chaque sous-carré contient
+    exactement les chiffres de 1 à n (taille de la grille).
+    """
+    size = grid.size
+    expected_set = set(range(1, size + 1))
+
+    # Vérifier les lignes
+    for row_idx in range(size):
+        if set(grid.get_row(row_idx)) != expected_set:
+            return False
+
+    # Vérifier les colonnes
+    for col_idx in range(size):
+        if set(grid.get_col(col_idx)) != expected_set:
+            return False
+
+    # Vérifier les sous-carrés
+    square_size = int(sqrt(size))
+    for row in range(0, size, square_size):
+        for col in range(0, size, square_size):
+            if set(grid.get_square(row, col)) != expected_set:
+                return False
+
+    return True

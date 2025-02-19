@@ -1,0 +1,6 @@
+colorama;
+keyboard;
+termios; sys_platform == "linux"
+numpy;
+matplotlib;
+networkx;
