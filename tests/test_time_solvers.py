@@ -11,7 +11,6 @@ from solvers.ite_heuristic import ite_heuristic_method
 from solvers.recu_heuristic import recu_heuristic_method
 from solvers.coloration_graphe import colorier_sudoku
 from tools.generator import generate_full, calibrate
-from tools.dessiner_graphe_sudoku import dessiner_graphe_sudoku
 
 grid = Grid(4)
 generate_full(grid)
@@ -31,7 +30,5 @@ calibrate(grid, "easy")  # Calibrage à des fins visuelles
 
 
 sudoku_graphe = SudokuGraphe(grid)
-
-dessiner_graphe_sudoku(sudoku_graphe)
 colorier_sudoku(sudoku_graphe)
-dessiner_graphe_sudoku(sudoku_graphe)
+
