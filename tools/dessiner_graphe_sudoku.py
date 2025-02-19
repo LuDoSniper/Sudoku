@@ -58,7 +58,7 @@ def display(grid: Grid|SudokuGraphe, graphe: bool = False) -> None:
     thread = threading.Thread(target=dessiner_graphe_sudoku, args=(SudokuGraphe(grid) if not graphe else grid, stop_event))
     thread.start()
 
-def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event, ax):
+def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event, ax, fig):
     """Dessine le graphe du Sudoku avec un léger décalage pour éviter le chevauchement des arêtes."""
     while not stop_event.is_set():
         ax.clear()
@@ -80,8 +80,6 @@ def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event, ax):
                 x_offset = (i % 2) * spacing  # Décalage horizontal pour certaines lignes
                 y_offset = (j % 2) * spacing  # Décalage vertical pour certaines colonnes
                 pos[(i, j)] = (j + x_offset, -i + y_offset)
-
-        fig = plt.figure(figsize=(size, size))
 
         # Définition des couleurs
         couleurs = {
