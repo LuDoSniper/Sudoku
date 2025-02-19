@@ -3,25 +3,25 @@ class Graphe:
         """Initialise un graphe vide sous forme d'un dictionnaire d'adjacence."""
         self.adjacence = {}
 
-    def ajouter_sommet(self, sommet, valeur) -> None:
+    def ajouter_sommet(self, sommet : tuple, valeur : int) -> None:
         """Ajoute un sommet avec une valeur au graphe."""
         if sommet not in self.adjacence:
             self.adjacence[sommet] = {'valeur': valeur, 'liens': []}
 
-    def ajouter_arête(self, sommet1, sommet2) -> None:
+    def ajouter_arête(self, sommet1 : tuple, sommet2 : tuple) -> None:
         """Ajoute une arête entre deux sommets (graphe non orienté)."""
         if sommet1 in self.adjacence and sommet2 in self.adjacence:
             self.adjacence[sommet1]['liens'].append(sommet2)
             self.adjacence[sommet2]['liens'].append(sommet1)
 
-    def supprimer_sommet(self, sommet) -> None:
+    def supprimer_sommet(self, sommet : tuple) -> None:
         """Supprime un sommet et toutes ses arêtes associées."""
         if sommet in self.adjacence:
             for voisin in self.adjacence[sommet]['liens']:
                 self.adjacence[voisin]['liens'].remove(sommet)
             del self.adjacence[sommet]
 
-    def supprimer_arête(self, sommet1, sommet2) -> None:
+    def supprimer_arête(self, sommet1 : tuple, sommet2 : tuple) -> None:
         """Supprime une arête entre deux sommets."""
         if sommet1 in self.adjacence and sommet2 in self.adjacence:
             if sommet2 in self.adjacence[sommet1]['liens']:
