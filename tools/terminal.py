@@ -12,7 +12,7 @@ from models.Grid import Grid
 from models.ChainedList import ChainedList
 from tools.generator import generate
 from tools.validator import verify, is_complete
-from tools.logger import log, unlog, get_logs, init as init_logs, chained_list_to_string as get_str_logs, get_tail
+from tools.logger import log, unlog, init as init_logs, chained_list_to_string as get_str_logs, get_last_occurence
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
 from solvers.ite_heuristic import ite_heuristic_method
@@ -92,7 +92,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     if cursor_position:
                         if grid.grid[cursor_position[0]][cursor_position[1]] != 0 and (cursor_position in grid.player_cells or selected_difficulty is None):
                             grid.grid[cursor_position[0]][cursor_position[1]] = 0
-                            log({"coords" : cursor_position, "event" : event.name})
+                            if cursor_position in grid.player_cells:
+                                log({"coords" : cursor_position, "event" : event.name})
                             try:
                                 grid.player_cells.remove(cursor_position)
                             except ValueError: # Lèvera une erreur si l'utilisateur est actuellement en importation
@@ -320,8 +321,8 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                     event = data.get("event")
 
                     if event == "backspace":
-                        # Si le dernier log est un "backspace", on restaure la valeur précédente
-                        prev = result.get_prev()
+                        # Si le dernier log est un "backspace", on restaure la valeur précédente de la case concernée
+                        prev = get_last_occurence(coords)
                         if prev is not None:
                             prev_data = prev.get_data()
                             prev_coords = prev_data.get("coords")

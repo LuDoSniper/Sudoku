@@ -37,24 +37,6 @@ def unlog(index: int = -1, data : bool = True) -> None:
         message("Aucun coup à annuler", "warning")
 
 
-def get_tail() -> ChainedList | None:
-    """
-    Renvoie le dernier élément de la liste chaînée.
-    """
-    global logs
-    if logs is None:
-        # Si les logs sont vides
-        return None
-
-    # Parcourir la liste pour trouver le dernier élément
-    current = logs
-    while current.get_next() is not None:
-        current = current.get_next()
-
-    # Retourner le dernier élément
-    return current
-
-
 def get_logs() -> list:
     """
     Récupération des logs
@@ -82,3 +64,9 @@ def chained_list_to_string() -> str:
         elements.append(str(current.get_data()))
         current = current.get_next()
     return " -> ".join(elements)
+
+def get_last_occurence(coords : list) -> ChainedList:
+    
+    global logs
+
+    return logs.get_last_occurence(coords)
