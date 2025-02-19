@@ -5,6 +5,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tools.dessiner_graphe_sudoku import dessiner_graphe_sudoku
 import threading
 
+from models.Grid import Grid
+from models.SudokuGraphe import SudokuGraphe
+
 def valide(sudoku_graphe, cellule, valeur):
     """
     Vérifie si la valeur peut être placée dans la cellule sans violer les règles du Sudoku.
@@ -58,11 +61,14 @@ def resolve(sudoku_graphe, liste_cellules, index, ax):
     return False
 
 
-def colorier_sudoku(sudoku_graphe):
+def colorier_sudoku(grid: Grid) -> SudokuGraphe:
     """
     Remplit le Sudoku en utilisant un algorithme de coloration de graphe.
     Modifie directement le SudokuGraphe donné en argument.
     """
+    # Créer le graphe du Sudoku
+    sudoku_graphe = SudokuGraphe(grid)
+
     # Récupérer la liste des cellules du graphe
     plt.ion()  # Active le mode interactif
     fig, ax = plt.subplots(figsize=(6, 6))
@@ -77,3 +83,4 @@ def colorier_sudoku(sudoku_graphe):
     plt.ioff()  # Désactive le mode interactif après la résolution
     plt.show()  # Garde le dernier état affiché
 
+    return sudoku_graphe
