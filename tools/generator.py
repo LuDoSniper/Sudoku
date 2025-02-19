@@ -1,11 +1,16 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from models.Grid import Grid
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # Ajouter le dossier parent au PATH pour importer les modules custom
+
+# Imports
 from math import sqrt
 import random
 
-def is_valid(grille, size, ligne, col, num):
+# Custom imports
+# models
+from models.Grid import Grid
+
+def is_valid(grille: list[list[int]], size: int, ligne: int, col: int, num: int) -> bool:
     """
     Vérifie si le placement du chiffre 'num' dans la case (ligne, col) est valide.
     """
@@ -28,6 +33,9 @@ def is_valid(grille, size, ligne, col, num):
     return True
 
 def generate_full(grid: Grid) -> bool:
+    """
+    Déprécié: Génère une grille de Sudoku complète.
+    """
     for line in range(grid.size):
         for col in range(grid.size):
             if grid.grid[line][col] == 0:
@@ -45,6 +53,9 @@ def generate_full(grid: Grid) -> bool:
     return True
 
 def calibrate(grid: Grid, difficulty: str) -> None:
+    """
+    Calibre la grille en retirant des cellules selon la difficulté donnée.
+    """
     difficulties = {
         "easy": (0.3, 0.4),
         "normal": (0.4, 0.5),
@@ -65,6 +76,9 @@ def calibrate(grid: Grid, difficulty: str) -> None:
 
 
 def generate(grid: Grid, difficulty: str, alg: callable = None, **kwargs) -> None:
+    """
+    Génère une grille de Sudoku en utilisant l'algorithme donné.
+    """
     if alg is None:
         generate_full(grid)
     else:

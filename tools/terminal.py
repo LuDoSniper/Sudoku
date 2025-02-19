@@ -1,3 +1,4 @@
+# Imports
 import os
 import sys
 if os.name == "posix":
@@ -6,20 +7,20 @@ if os.name == "nt":
     import msvcrt
 import keyboard
 import copy
-from tools.display_menu import display, message
 from math import sqrt
 
-# Custom
+# Custom imports
+# models
 from models.Grid import Grid
-
+# tools
+from tools.display_menu import display, message
 from tools.generator import generate
 from tools.validator import verify, is_complete
-from tools.logger import log, unlog, init as init_logs, chained_list_to_string as get_str_logs, get_last_occurence
+from tools.logger import log, unlog, init as init_logs, get_last_occurence
 from tools.dessiner_graphe_sudoku import display as display_graph, stop_thread
-
+# solvers
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
-from solvers.coloration_graphe import colorier_sudoku
 
 # Variables globales
 running = True
@@ -72,6 +73,9 @@ def set_terminal_mode(raw: bool = True) -> None:
         termios.tcsetattr(fd, termios.TCSADRAIN, settings)
 
 def display_menu(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False) -> None:
+    """
+    Affiche le menu correspondant.
+    """
     clear()
     display(menu, n=n, grid=grid, cursor_position=cursor_position, imported=imported, input=grid is not None and grid.size > 9)
 
@@ -79,6 +83,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
     """
     Fonction appelée lorsqu'une touche est pressée.
     """
+    # Récupération des variables globales
     global current_menu
     global selected_size
     global selected_difficulty
@@ -435,6 +440,9 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
             pass
 
 def mainloop() -> None:
+    """
+    Boucle principale du programme
+    """
     display_menu("main")
     keyboard.on_press(on_press)
 

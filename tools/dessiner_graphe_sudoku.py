@@ -1,8 +1,10 @@
 import sys
 import os
-import atexit
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # Ajouter le dossier parent au PATH pour importer les modules custom
 
 # Rendre le stderr muet pour empecher matplotlib de planter à la fermeture du programme
+# ------stderr------
+import atexit
 class NullIO:
     def write(self, s):
         pass
@@ -14,28 +16,38 @@ def disable_stderr():
     sys.stderr = NullIO()
 
 atexit.register(disable_stderr)
+# ------------------
 
-import threading
-import networkx as nx
-import matplotlib.pyplot as plt
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import networkx as nx
-import matplotlib.pyplot as plt
+# Rendre muet les warnings de matplotlib
+# ------warnings------
 import warnings
 warnings.filterwarnings(
     "ignore",
     category=UserWarning,
     message="Starting a Matplotlib GUI outside of the main thread will likely fail."
 )
+# --------------------
 
+# Imports
+import threading
+import networkx as nx
+import matplotlib.pyplot as plt
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# Custom imports
+# models
 from models.Grid import Grid
 from models.SudokuGraphe import SudokuGraphe
 
+# Variables globales
 thread: threading.Thread = None
 stop_event: threading.Event = None
-# current_figure: plt.Figure = None
 
 def stop_thread() -> None:
+    """
+    Stopper le thread courrant s'il existe
+    """
     global thread
     global stop_event
     global current_figure
@@ -59,12 +71,13 @@ def display(grid: Grid, solver: bool = False, pause: float = 0.5) -> None:
     stop_event = threading.Event()
 
     thread = threading.Thread(target=dessiner_graphe_sudoku if not solver else colorier_sudoku, args=(SudokuGraphe(grid) if not solver else grid, stop_event, pause))
-    # thread = threading.Thread(target=colorier_sudoku, args=(grid,))
     thread.start()
 
 
 def dessiner_graphe_sudoku(sudoku_graphe, stop_event: threading.Event = threading.Event(), pause: float = 0.5, ax: plt.Axes|None = None, fig: plt.Figure|None = None) -> plt.Axes:
-    """Dessine le graphe du Sudoku et met à jour l'affichage si `ax` et `fig` sont fournis."""
+    """
+    Dessine le graphe du Sudoku et met à jour l'affichage si `ax` et `fig` sont fournis.
+    """
     global current_figure
     current_figure = fig
 

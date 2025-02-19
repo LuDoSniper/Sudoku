@@ -1,6 +1,10 @@
+# Custom imports
+# models
+from models.Grid import Grid
+# tools
 from tools.is_valid import is_valid
 
-def find_next_empty(grid, size):
+def find_next_empty(grid: Grid, size: int) -> tuple[int, int]|None:
     """ Trouve la prochaine cellule vide (0) dans la grille. """
     for row in range(size):
         for column in range(size):
@@ -8,7 +12,7 @@ def find_next_empty(grid, size):
                 return (row, column)
     return None
 
-def find_next_empty_mrv(grid, size):
+def find_next_empty_mrv(grid: Grid, size: int) -> tuple[int, int]|None:
     """ Trouve la cellule vide avec le moins de choix possibles (MRV). """
     min_options = size + 1
     best_cell = None

@@ -1,8 +1,12 @@
+# Imports
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from models.Grid import Grid
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) # Ajouter le dossier parent au PATH pour importer les modules custom
 from math import sqrt
+
+# Custom imports
+# models
+from models.Grid import Grid
 
 def is_complete(grid: Grid) -> bool:
     """

@@ -1,8 +1,9 @@
 import math
 from models.Graphe import Graphe
+from models.Grid import Grid
 
 class SudokuGraphe(Graphe):
-    def __init__(self, grid):
+    def __init__(self, grid: Grid) -> None:
         """
         Initialise un graphe pour un Sudoku à partir d'une grille donnée.
         Chaque cellule est un sommet et est connectée à ses voisins selon les règles du Sudoku.
@@ -10,13 +11,13 @@ class SudokuGraphe(Graphe):
         super().__init__()
         self.grid = grid.grid
         self.size = grid.size
-        self.block_size = int(math.sqrt(self.size))
-        self.valeurs = {}  # Dictionnaire pour stocker les valeurs des cellules
+        self.block_size: int = int(math.sqrt(self.size))
+        self.valeurs: dict = {}  # Dictionnaire pour stocker les valeurs des cellules
         
         self._ajouter_sommets()
         self._ajouter_aretes()
 
-    def _ajouter_sommets(self):
+    def _ajouter_sommets(self) -> None:
         """Ajoute les sommets représentant les cellules de la grille avec leurs valeurs."""
         for i in range(self.size):
             for j in range(self.size):
@@ -24,7 +25,7 @@ class SudokuGraphe(Graphe):
                 self.ajouter_sommet((i, j), valeur)
                 self.valeurs[(i, j)] = valeur  # Stocker la valeur associée à la cellule
 
-    def _ajouter_aretes(self):
+    def _ajouter_aretes(self) -> None:
         """Ajoute les arêtes entre les sommets qui doivent avoir des valeurs différentes."""
         for i in range(self.size):
             for j in range(self.size):
@@ -32,7 +33,7 @@ class SudokuGraphe(Graphe):
                 for voisin in voisins:
                     self.ajouter_arête((i, j), voisin)
 
-    def _get_voisins(self, row, col):
+    def _get_voisins(self, row: int, col: int) -> set[tuple[int, int]]:
         """Retourne tous les voisins d'une cellule (même ligne, même colonne, même bloc)."""
         voisins = set()
         

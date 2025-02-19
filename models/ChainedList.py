@@ -82,33 +82,10 @@ class ChainedList:
             return (head, current.get_data())
         return (head, current)
 
-    def remove(self, index: int = -1) -> None:
-        """
-        Sert à supprimer la queue
-        """
-        current = self
-        
-        if self.get_next is None:
-            self = None
-
-        if index == -1:
-            
-            while current.get_next != None:
-                previous = current
-                current = current.get_next
-
-            previous.set_next = None
-        
-        else:
-            i = 0
-            while i < index:
-                current = current.get_next
-            next = current.get_next
-            prev = current.get_prev
-            prev.set_next(next)
-
     def get_tail(self) -> ChainedList | None:
-        #Renvoie le dernier élément de la liste chaînée.
+        """
+        Renvoie le dernier élément de la liste chaînée.
+        """
         current = self
 
         while current.get_next() != None:
@@ -117,7 +94,9 @@ class ChainedList:
         return current
 
     def get_last_occurence(self, target_coords : list) -> ChainedList:
-        # Parcourt la liste chaînée en sens inverse et retourne l'avant-dernière occurence, autre que backspace aux coordonnées données
+        """
+        Parcourt la liste chaînée en sens inverse et retourne l'avant-dernière occurence, autre que backspace aux coordonnées données
+        """
         current = self.get_tail()
 
         while current.get_data().get("coords") != target_coords:
@@ -125,6 +104,5 @@ class ChainedList:
         
         return current
     
-    def __str__(self):
-        # Retourne la représentation en chaîne de caractères de la donnée du noeud actuel
+    def __str__(self) -> str:
         return str(self.get_data())

@@ -1,8 +1,11 @@
+# Custom imports
+# models
 from models.ChainedList import ChainedList
+# tools
 from tools.display_menu import message
 
+# Variables globales
 logs: ChainedList|None = None
-
 
 def init() -> None:
     """
@@ -54,6 +57,9 @@ def get_logs() -> list:
     return logs_list
 
 def chained_list_to_string() -> str:
+    """
+    Récupération des logs sous forme de chaîne de caractères
+    """
     global logs
     if logs is None:
         return "Logs are empty"
@@ -66,7 +72,8 @@ def chained_list_to_string() -> str:
     return " -> ".join(elements)
 
 def get_last_occurence(coords : list) -> ChainedList:
-    
+    """
+    Retourne la dernière occurence d'une cellule
+    """
     global logs
-
     return logs.get_last_occurence(coords)

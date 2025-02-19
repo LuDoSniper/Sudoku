@@ -1,4 +1,8 @@
+# Imports
 import os
+
+# Custom imports
+# tools
 from tools import terminal
 
 # Lancement du programme et configuration du terminal

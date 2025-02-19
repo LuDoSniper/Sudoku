@@ -1,22 +1,31 @@
+# Imports
 import shutil
 import textwrap
 from colorama import Fore, Back
+
+# Custom imports
+# models
 from models.Grid import Grid
 from models.Char import Char
-from math import sqrt
+# tools
 from tools.timer import time_all
-from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
-from solvers.backtracking_recursif import backtracking_recursif
-# from solvers.ite_heuristic import ite_heuristic_method
-# from solvers.recu_heuristic import recu_heuristic_method
 
 def get_quit_commands_message() -> str:
+    """
+    Retourne le message pour quitter le programme
+    """
     return f"{Fore.LIGHTBLACK_EX}'esc' pour quitter{Fore.RESET}"
 
 def get_terminal_width() -> int:
+    """
+    Retourne la largeur du terminal
+    """
     return shutil.get_terminal_size().columns
 
 def message(message: str, type: str) -> None:
+    """
+    Affiche un message coloré en fonction du type
+    """
     match type:
         case "error":
             print(f"[{Fore.RED}ERROR{Fore.RESET}] : {message}")
@@ -32,6 +41,9 @@ def message(message: str, type: str) -> None:
             raise ValueError("Type de message invalide")
 
 def main_menu() -> None:
+    """
+    Affiche le menu principal
+    """
     width = 40
 
     print(get_quit_commands_message())
@@ -45,6 +57,9 @@ def main_menu() -> None:
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
 def rules_menu() -> None:
+    """
+    Affiche les règles du Sudoku
+    """
     width = 50
     
     rules = textwrap.fill('Le Sudoku se joue sur une grille n x n cases, divisée en racine(n) x racine(n) sous-grilles. Remplissez la grille avec les chiffres de 1 à n. Chaque ligne, colonne et sous-grille doivent contenir ces chiffres une seule fois.', width)
@@ -63,6 +78,9 @@ def rules_menu() -> None:
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
 def mode_selection_menu() -> None:
+    """
+    Affiche le menu de sélection du mode de jeu
+    """
     width = 30
     
     print(get_quit_commands_message())
@@ -76,6 +94,9 @@ def mode_selection_menu() -> None:
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
 def classique_menu() -> None:
+    """
+    Affiche le menu de sélection de la taille du Sudoku
+    """
     width = 30
 
     print(get_quit_commands_message())
@@ -91,6 +112,9 @@ def classique_menu() -> None:
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
 def n_selection(n: int|None = None) -> None:
+    """
+    Affiche le menu de sélection de la taille du Sudoku (custom input)
+    """
     width = 30
     n = n if n else ""
 
@@ -103,6 +127,9 @@ def n_selection(n: int|None = None) -> None:
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
 def difficulty_selection_menu(n: int|None = None) -> None:
+    """
+    Affiche le menu de sélection de la difficulté du Sudoku
+    """
     width = 30
     n = n if n else ""
 
@@ -118,6 +145,9 @@ def difficulty_selection_menu(n: int|None = None) -> None:
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
 def algo_selection(message: str, graph: bool = True) -> None:
+    """
+    Affiche le menu de sélection de l'algorithme
+    """
     width = 30
 
     print(get_quit_commands_message())
@@ -135,6 +165,9 @@ def algo_selection(message: str, graph: bool = True) -> None:
     print(f"{Fore.BLUE}└{'─' * (width + 2)}┘{Fore.RESET}")
 
 def algo_times() -> None:
+    """
+    Affiche les moyennes des temps d'execution des algorithmes
+    """
     width = 43
 
     message("Sample : 10", "info")
@@ -258,6 +291,9 @@ def recolor_string(chars: list[Char]) -> str:
     return string
 
 def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False, input: bool = False) -> None:
+    """
+    Affiche la grille de Sudoku
+    """
     lines = grid.__str__().split("\n")
     add = 1 if grid.size > 9 else 0
     index_y, index_x = cursor_pos[0] * 2 + 1, cursor_pos[1] * (4 + add) + 1 + 1
@@ -272,7 +308,6 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False, input:
         centers = decolored_line[index_x]
     right = decolored_line[index_x + (grid.get_max_width() - 1 if grid.size > 9 else 0) + 1:]
     
-    # center = f"{Back.CYAN}{center}{Back.RESET}"
     if isinstance(centers, list):
         for center in centers:
             center.back = Back.CYAN
@@ -322,6 +357,9 @@ def grid_menu(grid: Grid, cursor_pos: tuple[int], imported: bool = False, input:
     print()
 
 def display(menu: str, n: int|None = None, grid: Grid|None = None, cursor_position: tuple[int]|None = None, imported: bool = False, input: bool = False) -> None:
+    """
+    Etablit la correspondance entre le menu et la fonction à appeler
+    """
     match menu:
         case "main":
             main_menu()

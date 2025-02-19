@@ -1,11 +1,18 @@
+# Imports
 import timeit
 
+# Custom imports
+# models
+from models.Grid import Grid
+# solvers
 from solvers.backtracking_iteratif_pile import backtracking_iteratif_pile
 from solvers.backtracking_recursif import backtracking_recursif
-from models.Grid import Grid
 
 def time(message_str: str, func: callable, *args: any, **kwargs: any) -> float:
-    from tools.display_menu import message
+    """
+    Calcule le temps d'exécution moyen de la fonction `func` avec les arguments `args` et `kwargs`
+    """
+    from tools.display_menu import message # Import ici pour éviter la boucle
 
     message(message_str, 'info')
     sum = 0
@@ -14,6 +21,9 @@ def time(message_str: str, func: callable, *args: any, **kwargs: any) -> float:
     return sum / 5
 
 def time_all():
+    """
+    Calcule le temps d'exécution moyen de chaque solveur pour les grilles de 4x4, 9x9 et 16x16
+    """
     times = []
     times.append([time("Calcul de backtracking_iteratif pour 4x4...", backtracking_iteratif_pile, Grid(4), use_heuristic=False, use_random=True), # A passer en False
                   time("Calcul de backtracking_recursif pour 4x4...", backtracking_recursif, Grid(4), use_heuristic=False, use_random=False),

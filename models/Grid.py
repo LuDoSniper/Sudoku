@@ -1,6 +1,6 @@
 import random
 from math import sqrt
-from colorama import init as colorama_init, Fore, Style
+from colorama import Fore
 
 class Grid:
     
@@ -25,12 +25,21 @@ class Grid:
         self.indice_cells_buffer: list[tuple] = []
     
     def get_row(self, index: int) -> list:
+        """
+        Retourne la ligne à l'index donné
+        """
         return list(self.grid[index])
     
     def get_col(self, index: int) -> list:
+        """
+        Retourne la colonne à l'index donné
+        """
         return [row[index] for row in self.grid]
 
     def get_square(self, row: int, col: int) -> list:
+        """
+        Retourne le sous-carré contenant la cellule à la position donnée
+        """
         square_size = int(sqrt(self.size))
 
         # Trouver le coin supérieur gauche du sous-carré
@@ -46,16 +55,15 @@ class Grid:
         return square
 
     def get_max_width(self) -> int:
-        # max_width = 0
-        # for row in self.grid:
-        #     for cell in row:
-        #         cell_width = len(str(cell))
-        #         if cell_width > max_width:
-        #             max_width = cell_width
-        max_width = len(str(self.size))
-        return max_width
+        """
+        Retourne la largeur maximale d'une cell
+        """
+        return len(str(self.size))
 
     def get_borders(self):
+        """
+        Retourne les bordures de la grille
+        """
         top_left, top_mid, top_right = "┌", "┬", "┐"
         mid_left, mid_mid, mid_right = "├", "┼", "┤"
         bot_left, bot_mid, bot_right = "└", "┴", "┘"
@@ -99,12 +107,15 @@ class Grid:
         return top_border, mid_border, mid_border_sep, bottom_border
 
     def activate_indice_buffer(self) -> None:
+        """
+        Applique un des indices du buffer et vide le buffer
+        """
         indice = random.choice(self.indice_cells_buffer)
         self.indice_cells.append((indice[0], indice[1]))
         self.grid[indice[0]][indice[1]] = indice[2]
         self.indice_cells_buffer = []
 
-    def __str__(self):
+    def __str__(self) -> str:
         square_size = int(sqrt(self.size))
         max_width = self.get_max_width()
 
