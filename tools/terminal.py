@@ -356,7 +356,7 @@ def on_press(event: keyboard.KeyboardEvent) -> None:
                 else:
                     message("Aucun coup à annuler", "warning")
         case 'i':
-            if current_menu == "grid" and selected_difficulty is None:
+            if current_menu == "grid" and selected_difficulty is not None:
                 if not is_complete(grid):
                     current_menu = "indice_selection"
                     display_menu(current_menu)
